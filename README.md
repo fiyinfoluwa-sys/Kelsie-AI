@@ -1,29 +1,29 @@
-# Kelsie-AI — README
+# Kelsie AI 🤖
 
-Kelsie is a small, local chatbot you can run from the command line. It’s built with Hugging Face Transformers and tuned to be easy to run on a Mac (MPS) or CPU. This README is short, human, and focused on getting you chatting quickly.
+A powerful, web-connected AI chatbot built with Python and Hugging Face transformers. Kelsie combines local AI processing with real-time Google Search integration for accurate, up-to-date information.
 
----
+## Features ✨
 
-## Quick summary
-- Run Kelsie locally (no paid APIs required).
-- Works on macOS (MPS) or CPU.
-- Swap models quickly via an environment variable `KELSIE_MODEL`.
-- Lightweight defaults so it won’t normally crash your machine.
+- **Web-Connected Intelligence**: Real-time Google Search integration for current information
+- **Local AI Processing**: Uses Microsoft DialoGPT-medium model running locally
+- **Conversation Memory**: Maintains context across conversation turns
+- **Apple Silicon Optimized**: Automatic MPS detection for faster inference
+- **Free & Open Source**: No API costs for the core functionality
+- **Easy Setup**: Simple installation and configuration
 
----
+## Tech Stack 🛠️
 
-## Files you care about
-- `backend/kelsie_cli_transformers.py` — the main CLI script (one file you run).
-- `requirements.txt` — Python dependencies.
-- `README.md` — (this file).
+- **Python 3.9+**
+- **PyTorch** - AI model inference
+- **Hugging Face Transformers** - Pre-trained language models
+- **Google Custom Search API** - Real-time web search
+- **Requests** - HTTP library for API calls
 
----
+## Installation 📦
 
-## Setup (5 minutes)
-
-1. Clone your repo (use your SSH remote):
+1. **Clone the repository**
 ```bash
-git clone git@github.com:fiyinfoluwa-sys/Kelsie-AI.git
+git clone https://github.com/fiyinfoluwa-sys/Kelsie-AI.git
 cd Kelsie-AI
 
 2. Create and activate a virtual environment:

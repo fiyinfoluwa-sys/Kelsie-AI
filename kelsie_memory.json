@@ -1,0 +1,64 @@
+{
+  "hi": [
+    {
+      "input": "hi ",
+      "response": "hello",
+      "timestamp": "2025-10-06 18:41:17.037098",
+      "score": 0
+    },
+    {
+      "input": "hi ",
+      "response": "I understand. Could you elaborate on that?",
+      "timestamp": "2025-10-06 18:42:02.532393",
+      "score": -1
+    }
+  ],
+  "how_are": [
+    {
+      "input": "how are you",
+      "response": "I'm good thanks for the help",
+      "timestamp": "2025-10-06 18:41:22.493412",
+      "score": 1
+    }
+  ],
+  "whats_todays": [
+    {
+      "input": "whats todays date",
+      "response": "I understand. Could you elaborate on that?",
+      "timestamp": "2025-10-06 18:41:45.584293",
+      "score": 0
+    }
+  ],
+  "what_is": [
+    {
+      "input": "what is the date for today",
+      "response": "I understand. Could you elaborate on that?",
+      "timestamp": "2025-10-06 18:41:54.399196",
+      "score": 0
+    }
+  ],
+  "hello": [
+    {
+      "input": "hello",
+      "response": "I understand. Could you elaborate on that?",
+      "timestamp": "2025-10-06 18:42:10.899476",
+      "score": 0
+    }
+  ],
+  "good_job": [
+    {
+      "input": "good job",
+      "response": "I understand. Could you elaborate on that?",
+      "timestamp": "2025-10-06 18:42:14.591642",
+      "score": -1
+    }
+  ],
+  "hey": [
+    {
+      "input": "hey",
+      "response": "I understand. Could you elaborate on that?",
+      "timestamp": "2025-10-06 18:42:22.986712",
+      "score": 0
+    }
+  ]
+}

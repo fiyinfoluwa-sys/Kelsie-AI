@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -234,6 +235,47 @@ def init_db() -> None:
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS open_loops (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT NOT NULL,
+                action TEXT NOT NULL,
+                normalized_action TEXT NOT NULL,
+                person TEXT,
+                project TEXT,
+                timing_text TEXT,
+                scheduled_for TEXT,
+                status TEXT NOT NULL DEFAULT 'open'
+                    CHECK (
+                        status IN ('open', 'completed', 'dismissed')
+                    ),
+                confidence REAL NOT NULL DEFAULT 0.8,
+                source_conversation_id INTEGER,
+                source_message_id INTEGER,
+                completed_at TEXT,
+                dismissed_at TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+
+            CREATE TABLE IF NOT EXISTS user_memory (
+                user_id TEXT PRIMARY KEY,
+                memory_json TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS conversation_summaries (
+                conversation_id INTEGER PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                summary TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY (conversation_id)
+                    REFERENCES conversations_v2(id)
+                    ON DELETE CASCADE
+            );
             """
         )
 
@@ -273,6 +315,20 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS
                 idx_reminders_user_alert
             ON reminders (user_id, status, alert_at ASC);
+
+
+            CREATE INDEX IF NOT EXISTS
+                idx_open_loops_user_status_updated
+            ON open_loops (user_id, status, updated_at DESC);
+
+            CREATE INDEX IF NOT EXISTS
+                idx_open_loops_user_action
+            ON open_loops (user_id, normalized_action, status);
+
+
+            CREATE INDEX IF NOT EXISTS
+                idx_conversation_summaries_user_updated
+            ON conversation_summaries (user_id, updated_at DESC);
             """
         )
 
@@ -303,6 +359,9 @@ def _normalize_profile(
     normalized.setdefault("quiet_hours_start", None)
     normalized.setdefault("quiet_hours_end", None)
     normalized.setdefault("proactivity", "balanced")
+    normalized.setdefault("proactivity_level", normalized.get("proactivity", "balanced"))
+    normalized.setdefault("memory_enabled", True)
+    normalized.setdefault("adaptive_tone", True)
     return normalized
 
 
@@ -1582,3 +1641,711 @@ def delete_reminder(user_id: str, reminder_id: int) -> Dict[str, Any]:
         "deleted_reminder_id": int(reminder_id),
         "reminder": reminder,
     }
+
+# ============================================================
+# OPEN LOOP FUNCTIONS
+# ============================================================
+
+
+def _clean_open_loop_text(
+    value: Any,
+    field_name: str,
+    max_length: int,
+    required: bool = False,
+) -> Optional[str]:
+    cleaned = " ".join(str(value or "").strip().split())
+
+    if not cleaned:
+        if required:
+            raise ValueError(f"{field_name} is required.")
+        return None
+
+    return cleaned[:max_length]
+
+
+def _normalize_open_loop_action(action: str) -> str:
+    normalized = " ".join(
+        "".join(
+            character.lower()
+            if character.isalnum() or character.isspace()
+            else " "
+            for character in str(action)
+        ).split()
+    )
+
+    if not normalized:
+        raise ValueError("Open-loop action is required.")
+
+    return normalized[:220]
+
+
+def _serialize_open_loop(row: sqlite3.Row) -> Dict[str, Any]:
+    return {
+        "id": int(row["id"]),
+        "user_id": str(row["user_id"]),
+        "action": str(row["action"]),
+        "normalized_action": str(row["normalized_action"]),
+        "person": str(row["person"]) if row["person"] else None,
+        "project": str(row["project"]) if row["project"] else None,
+        "timing_text": (
+            str(row["timing_text"]) if row["timing_text"] else None
+        ),
+        "scheduled_for": (
+            str(row["scheduled_for"])
+            if row["scheduled_for"]
+            else None
+        ),
+        "status": str(row["status"]),
+        "confidence": float(row["confidence"] or 0.0),
+        "source_conversation_id": (
+            int(row["source_conversation_id"])
+            if row["source_conversation_id"] is not None
+            else None
+        ),
+        "source_message_id": (
+            int(row["source_message_id"])
+            if row["source_message_id"] is not None
+            else None
+        ),
+        "completed_at": (
+            str(row["completed_at"]) if row["completed_at"] else None
+        ),
+        "dismissed_at": (
+            str(row["dismissed_at"]) if row["dismissed_at"] else None
+        ),
+        "created_at": str(row["created_at"]),
+        "updated_at": str(row["updated_at"]),
+    }
+
+
+def _get_open_loop_row(
+    connection: sqlite3.Connection,
+    user_id: str,
+    open_loop_id: int,
+) -> sqlite3.Row:
+    row = connection.execute(
+        """
+        SELECT *
+        FROM open_loops
+        WHERE id = ? AND user_id = ?
+        LIMIT 1
+        """,
+        (int(open_loop_id), str(user_id)),
+    ).fetchone()
+
+    if not row:
+        raise ValueError("Open loop not found.")
+
+    return row
+
+
+def create_open_loop(
+    user_id: str,
+    action: str,
+    person: Optional[str] = None,
+    project: Optional[str] = None,
+    timing_text: Optional[str] = None,
+    scheduled_for: Optional[str] = None,
+    confidence: float = 0.8,
+    source_conversation_id: Optional[int] = None,
+    source_message_id: Optional[int] = None,
+) -> Dict[str, Any]:
+    cleaned_action = _clean_open_loop_text(
+        action,
+        "Open-loop action",
+        220,
+        required=True,
+    )
+    assert cleaned_action is not None
+
+    normalized_action = _normalize_open_loop_action(cleaned_action)
+    cleaned_person = _clean_open_loop_text(person, "Person", 120)
+    cleaned_project = _clean_open_loop_text(project, "Project", 160)
+    cleaned_timing = _clean_open_loop_text(
+        timing_text,
+        "Timing",
+        160,
+    )
+
+    normalized_scheduled_for: Optional[str] = None
+    if scheduled_for:
+        normalized_scheduled_for = to_utc_iso(
+            parse_datetime(scheduled_for)
+        )
+
+    try:
+        normalized_confidence = float(confidence)
+    except (TypeError, ValueError):
+        normalized_confidence = 0.8
+
+    normalized_confidence = max(0.0, min(normalized_confidence, 1.0))
+    now = utc_now()
+
+    with get_connection() as connection:
+        duplicate = connection.execute(
+            """
+            SELECT *
+            FROM open_loops
+            WHERE user_id = ?
+              AND normalized_action = ?
+              AND status = 'open'
+            ORDER BY updated_at DESC, id DESC
+            LIMIT 1
+            """,
+            (str(user_id), normalized_action),
+        ).fetchone()
+
+        if duplicate:
+            return {
+                "open_loop": _serialize_open_loop(duplicate),
+                "created": False,
+            }
+
+        cursor = connection.execute(
+            """
+            INSERT INTO open_loops (
+                user_id,
+                action,
+                normalized_action,
+                person,
+                project,
+                timing_text,
+                scheduled_for,
+                status,
+                confidence,
+                source_conversation_id,
+                source_message_id,
+                completed_at,
+                dismissed_at,
+                created_at,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'open', ?, ?, ?, NULL, NULL, ?, ?)
+            """,
+            (
+                str(user_id),
+                cleaned_action,
+                normalized_action,
+                cleaned_person,
+                cleaned_project,
+                cleaned_timing,
+                normalized_scheduled_for,
+                normalized_confidence,
+                (
+                    int(source_conversation_id)
+                    if source_conversation_id is not None
+                    else None
+                ),
+                (
+                    int(source_message_id)
+                    if source_message_id is not None
+                    else None
+                ),
+                now,
+                now,
+            ),
+        )
+        open_loop_id = int(cursor.lastrowid)
+        row = _get_open_loop_row(
+            connection,
+            str(user_id),
+            open_loop_id,
+        )
+
+    return {
+        "open_loop": _serialize_open_loop(row),
+        "created": True,
+    }
+
+
+def list_open_loops(
+    user_id: str,
+    status: str = "open",
+    limit: int = 100,
+) -> List[Dict[str, Any]]:
+    normalized_status = str(status or "open").strip().lower()
+
+    if normalized_status not in {
+        "all",
+        "open",
+        "completed",
+        "dismissed",
+    }:
+        raise ValueError("Invalid open-loop status.")
+
+    safe_limit = max(1, min(int(limit), 250))
+    where_status = ""
+    parameters: List[Any] = [str(user_id)]
+
+    if normalized_status != "all":
+        where_status = " AND status = ?"
+        parameters.append(normalized_status)
+
+    parameters.append(safe_limit)
+
+    with get_connection() as connection:
+        rows = connection.execute(
+            """
+            SELECT *
+            FROM open_loops
+            WHERE user_id = ?
+            {where_status}
+            ORDER BY
+                CASE WHEN scheduled_for IS NULL THEN 1 ELSE 0 END,
+                scheduled_for ASC,
+                updated_at DESC,
+                id DESC
+            LIMIT ?
+            """.format(where_status=where_status),
+            tuple(parameters),
+        ).fetchall()
+
+    return [_serialize_open_loop(row) for row in rows]
+
+
+def get_open_loop_state(user_id: str) -> Dict[str, Any]:
+    open_items = list_open_loops(user_id, status="open", limit=250)
+    completed = list_open_loops(user_id, status="completed", limit=100)
+
+    return {
+        "open": open_items,
+        "completed": completed,
+        "open_count": len(open_items),
+        "server_time": utc_now(),
+    }
+
+
+def complete_open_loop(
+    user_id: str,
+    open_loop_id: int,
+) -> Dict[str, Any]:
+    now = utc_now()
+
+    with get_connection() as connection:
+        current = _get_open_loop_row(
+            connection,
+            user_id,
+            open_loop_id,
+        )
+
+        if str(current["status"]) == "dismissed":
+            raise ValueError("A dismissed open loop cannot be completed.")
+
+        connection.execute(
+            """
+            UPDATE open_loops
+            SET
+                status = 'completed',
+                completed_at = COALESCE(completed_at, ?),
+                dismissed_at = NULL,
+                updated_at = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            (now, now, int(open_loop_id), str(user_id)),
+        )
+        row = _get_open_loop_row(
+            connection,
+            user_id,
+            open_loop_id,
+        )
+
+    return _serialize_open_loop(row)
+
+
+def dismiss_open_loop(
+    user_id: str,
+    open_loop_id: int,
+) -> Dict[str, Any]:
+    now = utc_now()
+
+    with get_connection() as connection:
+        _get_open_loop_row(connection, user_id, open_loop_id)
+        connection.execute(
+            """
+            UPDATE open_loops
+            SET
+                status = 'dismissed',
+                dismissed_at = ?,
+                updated_at = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            (now, now, int(open_loop_id), str(user_id)),
+        )
+        row = _get_open_loop_row(
+            connection,
+            user_id,
+            open_loop_id,
+        )
+
+    return _serialize_open_loop(row)
+
+
+def undo_open_loop_capture(
+    user_id: str,
+    open_loop_id: int,
+) -> Dict[str, Any]:
+    with get_connection() as connection:
+        row = _get_open_loop_row(connection, user_id, open_loop_id)
+        open_loop = _serialize_open_loop(row)
+
+        if open_loop["status"] != "open":
+            raise ValueError("Only an open capture can be undone.")
+
+        connection.execute(
+            "DELETE FROM open_loops WHERE id = ? AND user_id = ?",
+            (int(open_loop_id), str(user_id)),
+        )
+
+    return {
+        "deleted_open_loop_id": int(open_loop_id),
+        "open_loop": open_loop,
+    }
+
+
+def get_most_recent_open_loop(
+    user_id: str,
+    source_conversation_id: Optional[int] = None,
+) -> Optional[Dict[str, Any]]:
+    parameters: List[Any] = [str(user_id)]
+    conversation_filter = ""
+
+    if source_conversation_id is not None:
+        conversation_filter = " AND source_conversation_id = ?"
+        parameters.append(int(source_conversation_id))
+
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT *
+            FROM open_loops
+            WHERE user_id = ?
+              AND status = 'open'
+              {conversation_filter}
+            ORDER BY created_at DESC, id DESC
+            LIMIT 1
+            """.format(conversation_filter=conversation_filter),
+            tuple(parameters),
+        ).fetchone()
+
+    return _serialize_open_loop(row) if row else None
+
+# ============================================================
+# PERSISTENT USER MEMORY
+# ============================================================
+
+
+MEMORY_CATEGORIES = (
+    "facts",
+    "relationships",
+    "situations",
+    "preferences",
+    "patterns",
+)
+
+
+def _empty_memory() -> Dict[str, List[Dict[str, Any]]]:
+    return {category: [] for category in MEMORY_CATEGORIES}
+
+
+def _clean_memory_text(value: Any, maximum: int = 500) -> str:
+    return " ".join(str(value or "").strip().split())[:maximum]
+
+
+def _memory_identity(item: Dict[str, Any]) -> str:
+    key = _clean_memory_text(item.get("key"), 160).lower()
+    value = _clean_memory_text(item.get("value"), 500).lower()
+    raw = key or value
+    return re.sub(r"[^a-z0-9]+", " ", raw).strip()
+
+
+def _normalize_memory_object(value: Any) -> Dict[str, List[Dict[str, Any]]]:
+    source = value if isinstance(value, dict) else {}
+    normalized = _empty_memory()
+
+    for category in MEMORY_CATEGORIES:
+        raw_items = source.get(category)
+        if not isinstance(raw_items, list):
+            continue
+
+        seen = set()
+        for raw_item in raw_items[-80:]:
+            if isinstance(raw_item, str):
+                raw_item = {"value": raw_item}
+            if not isinstance(raw_item, dict):
+                continue
+
+            key = _clean_memory_text(raw_item.get("key"), 160)
+            item_value = _clean_memory_text(raw_item.get("value"), 500)
+            if not item_value:
+                continue
+
+            try:
+                confidence = float(raw_item.get("confidence", 0.8))
+            except (TypeError, ValueError):
+                confidence = 0.8
+
+            item = {
+                "key": key or item_value[:80],
+                "value": item_value,
+                "confidence": max(0.0, min(confidence, 1.0)),
+                "source_conversation_id": _safe_int(
+                    raw_item.get("source_conversation_id")
+                ),
+                "source_message_id": _safe_int(raw_item.get("source_message_id")),
+                "updated_at": _clean_memory_text(
+                    raw_item.get("updated_at") or utc_now(),
+                    80,
+                ),
+            }
+            identity = _memory_identity(item)
+            if not identity or identity in seen:
+                continue
+            seen.add(identity)
+            normalized[category].append(item)
+
+    return normalized
+
+
+def get_user_memory(user_id: str) -> Dict[str, Any]:
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT memory_json, created_at, updated_at
+            FROM user_memory
+            WHERE user_id = ?
+            LIMIT 1
+            """,
+            (str(user_id),),
+        ).fetchone()
+
+    if not row:
+        return {
+            "user_id": str(user_id),
+            "memory": _empty_memory(),
+            "created_at": None,
+            "updated_at": None,
+        }
+
+    return {
+        "user_id": str(user_id),
+        "memory": _normalize_memory_object(_json_dict(row["memory_json"])),
+        "created_at": str(row["created_at"]),
+        "updated_at": str(row["updated_at"]),
+    }
+
+
+def upsert_user_memory(
+    user_id: str,
+    updates: List[Dict[str, Any]],
+    source_conversation_id: Optional[int] = None,
+    source_message_id: Optional[int] = None,
+) -> Dict[str, Any]:
+    current_record = get_user_memory(user_id)
+    memory = _normalize_memory_object(current_record.get("memory"))
+    now = utc_now()
+    saved: List[Dict[str, Any]] = []
+
+    for raw_update in updates[:20]:
+        if not isinstance(raw_update, dict):
+            continue
+
+        category = _clean_memory_text(raw_update.get("category"), 40).lower()
+        if category not in MEMORY_CATEGORIES:
+            continue
+
+        key = _clean_memory_text(raw_update.get("key"), 160)
+        value = _clean_memory_text(raw_update.get("value"), 500)
+        if not value:
+            continue
+
+        try:
+            confidence = float(raw_update.get("confidence", 0.0))
+        except (TypeError, ValueError):
+            confidence = 0.0
+        confidence = max(0.0, min(confidence, 1.0))
+        if confidence < 0.78:
+            continue
+
+        new_item = {
+            "key": key or value[:80],
+            "value": value,
+            "confidence": confidence,
+            "source_conversation_id": source_conversation_id,
+            "source_message_id": source_message_id,
+            "updated_at": now,
+        }
+        identity = _memory_identity(new_item)
+        if not identity:
+            continue
+
+        category_items = memory[category]
+        replacement_index: Optional[int] = None
+        for index, existing in enumerate(category_items):
+            existing_key = _clean_memory_text(existing.get("key"), 160).lower()
+            new_key = _clean_memory_text(new_item.get("key"), 160).lower()
+            if existing_key and new_key and existing_key == new_key:
+                replacement_index = index
+                break
+            if _memory_identity(existing) == identity:
+                replacement_index = index
+                break
+
+        if replacement_index is None:
+            category_items.append(new_item)
+        else:
+            category_items[replacement_index] = new_item
+
+        memory[category] = category_items[-80:]
+        saved.append({"category": category, **new_item})
+
+    created_at = current_record.get("created_at") or now
+    with get_connection() as connection:
+        connection.execute(
+            """
+            INSERT INTO user_memory (
+                user_id,
+                memory_json,
+                created_at,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                memory_json = excluded.memory_json,
+                updated_at = excluded.updated_at
+            """,
+            (
+                str(user_id),
+                json.dumps(memory, ensure_ascii=False),
+                str(created_at),
+                now,
+            ),
+        )
+
+    return {
+        **get_user_memory(user_id),
+        "saved": saved,
+    }
+
+
+def clear_user_memory(user_id: str) -> Dict[str, Any]:
+    with get_connection() as connection:
+        connection.execute(
+            "DELETE FROM user_memory WHERE user_id = ?",
+            (str(user_id),),
+        )
+    return {
+        "user_id": str(user_id),
+        "memory": _empty_memory(),
+        "cleared": True,
+    }
+
+
+# ============================================================
+# ROLLING CONVERSATION SUMMARIES
+# ============================================================
+
+
+def get_conversation_summary(
+    user_id: str,
+    conversation_id: int,
+) -> str:
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT summary
+            FROM conversation_summaries
+            WHERE conversation_id = ? AND user_id = ?
+            LIMIT 1
+            """,
+            (int(conversation_id), str(user_id)),
+        ).fetchone()
+    return _clean_memory_text(row["summary"], 1800) if row else ""
+
+
+def save_conversation_summary(
+    user_id: str,
+    conversation_id: int,
+    summary: Any,
+) -> str:
+    cleaned = _clean_memory_text(summary, 1800)
+    if not cleaned:
+        return get_conversation_summary(user_id, conversation_id)
+
+    now = utc_now()
+    with get_connection() as connection:
+        existing = connection.execute(
+            """
+            SELECT created_at
+            FROM conversation_summaries
+            WHERE conversation_id = ? AND user_id = ?
+            LIMIT 1
+            """,
+            (int(conversation_id), str(user_id)),
+        ).fetchone()
+        created_at = str(existing["created_at"]) if existing else now
+        connection.execute(
+            """
+            INSERT INTO conversation_summaries (
+                conversation_id,
+                user_id,
+                summary,
+                created_at,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(conversation_id) DO UPDATE SET
+                user_id = excluded.user_id,
+                summary = excluded.summary,
+                updated_at = excluded.updated_at
+            """,
+            (
+                int(conversation_id),
+                str(user_id),
+                cleaned,
+                created_at,
+                now,
+            ),
+        )
+    return cleaned
+
+
+def get_recent_conversation_summaries(
+    user_id: str,
+    exclude_conversation_id: Optional[int] = None,
+    limit: int = 5,
+) -> List[Dict[str, Any]]:
+    parameters: List[Any] = [str(user_id)]
+    exclusion = ""
+    if exclude_conversation_id is not None:
+        exclusion = " AND cs.conversation_id != ?"
+        parameters.append(int(exclude_conversation_id))
+    parameters.append(max(1, min(int(limit), 20)))
+
+    with get_connection() as connection:
+        rows = connection.execute(
+            """
+            SELECT
+                cs.conversation_id,
+                cs.summary,
+                cs.updated_at,
+                c.title
+            FROM conversation_summaries AS cs
+            LEFT JOIN conversations_v2 AS c
+                ON c.id = cs.conversation_id
+            WHERE cs.user_id = ?
+              {exclusion}
+            ORDER BY cs.updated_at DESC
+            LIMIT ?
+            """.format(exclusion=exclusion),
+            tuple(parameters),
+        ).fetchall()
+
+    return [
+        {
+            "conversation_id": int(row["conversation_id"]),
+            "title": str(row["title"] or "Conversation"),
+            "summary": _clean_memory_text(row["summary"], 1800),
+            "updated_at": str(row["updated_at"]),
+        }
+        for row in rows
+    ]

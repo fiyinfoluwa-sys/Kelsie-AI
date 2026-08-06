@@ -8,32 +8,23 @@
   />
   <title>Kelsie</title>
 
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
-
   <style>
     :root {
       --ink: #1d2326;
-      --ink-soft: #66706f;
-      --ink-muted: #97a09e;
-      --line: rgba(35, 44, 45, 0.08);
+      --ink-soft: #656b70;
+      --ink-muted: #969ca1;
+      --line: rgba(31, 35, 38, 0.08);
       --glass-border: rgba(255, 255, 255, 0.74);
-      --assistant-bg: rgba(232, 238, 236, 0.94);
-      --assistant-text: #2d3637;
-      --user-bg-1: #3a4245;
-      --user-bg-2: #202629;
-      --fog-light: #e7efec;
-      --fog: #c8d4d0;
-      --fog-mid: #a9b7b3;
-      --fog-deep: #788580;
-      --charcoal: #343b3e;
-      --charcoal-deep: #1d2326;
+      --assistant-bg: rgba(236, 238, 240, 0.95);
+      --assistant-text: #2f3438;
+      --user-bg-1: #3b4045;
+      --user-bg-2: #202428;
+      --fog-light: #eceeef;
+      --fog: #d0d3d6;
+      --fog-mid: #a9adb1;
+      --fog-deep: #777d82;
+      --charcoal: #34393e;
+      --charcoal-deep: #1c2024;
       --success: #54a982;
       --warning: #b39b61;
       --danger: #c66d73;
@@ -84,12 +75,12 @@
       bottom: 18px;
       z-index: 99999;
       width: 350px;
-      height: 540px;
+      height: 320px;
       pointer-events: none;
     }
 
     /* =====================================================
-       FOGGY-DEW ORB
+       SLATE GLASS ORBS — #808899
     ===================================================== */
 
     #kelsie-orb {
@@ -103,102 +94,138 @@
       padding: 0;
       appearance: none;
       -webkit-appearance: none;
-      border: 1px solid rgba(83, 98, 94, 0.3);
-      border-radius: 50%;
-      overflow: hidden;
-      isolation: isolate;
       cursor: pointer;
       pointer-events: auto;
-      background:
-        radial-gradient(
-          circle at 34% 27%,
-          rgba(255, 255, 255, 1) 0%,
-          rgba(247, 251, 249, 1) 18%,
-          rgba(226, 235, 232, 0.99) 42%,
-          rgba(194, 208, 203, 0.99) 66%,
-          rgba(145, 161, 156, 0.99) 84%,
-          rgba(92, 105, 101, 1) 100%
-        );
-      box-shadow:
-        0 12px 27px rgba(30, 39, 40, 0.21),
-        0 4px 13px rgba(154, 178, 170, 0.24),
-        0 0 22px rgba(204, 221, 215, 0.28),
-        inset 0 1px 1px rgba(255, 255, 255, 0.84),
-        inset 0 -5px 10px rgba(43, 55, 54, 0.16);
-      transform: scale(1);
+      transform: scale(1) translateZ(0);
       translate: 0 0;
       transform-origin: center;
       transition:
         opacity 0.24s ease,
-        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
         filter 0.25s ease,
-        box-shadow 0.25s ease;
+        box-shadow 0.28s ease;
       animation:
-        orbFloat 4s ease-in-out infinite,
-        orbGlow 4.8s ease-in-out infinite;
+        orbFloat 5.4s ease-in-out infinite,
+        orbGlow 5.8s ease-in-out infinite;
+
+      --orb-shadow-primary: 0 15px 31px rgba(70, 76, 91, 0.24);
+      --orb-shadow-secondary: 0 5px 12px rgba(86, 94, 112, 0.16);
+      --orb-glow: 0 0 24px rgba(151, 160, 184, 0.34);
+      --orb-inner-light: inset 4px 5px 10px rgba(255, 255, 255, 0.72);
+      --orb-inner-shade: inset -7px -9px 13px rgba(72, 79, 95, 0.24);
     }
 
-    #kelsie-orb::before {
-      content: "";
-      position: absolute;
-      inset: 1px;
-      z-index: 1;
-      border-radius: 50%;
-      background:
-        linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.86),
-          rgba(226, 237, 233, 0.22) 42%,
-          rgba(109, 127, 121, 0.11) 72%,
-          rgba(255, 255, 255, 0.3)
-        );
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.56),
-        inset 0 -2px 4px rgba(48, 61, 59, 0.09);
-      pointer-events: none;
-    }
-
-    #kelsie-orb::after {
-      content: "";
-      position: absolute;
-      top: 8px;
-      left: 11px;
-      z-index: 3;
-      width: 23px;
-      height: 10px;
-      border-radius: 999px;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0.92),
-          rgba(228, 238, 235, 0.2)
-        );
-      filter: blur(1px);
-      transform: rotate(-24deg);
-      opacity: 0.92;
-      pointer-events: none;
-    }
-
-    .orb-core {
-      position: absolute;
-      inset: 10px;
-      z-index: 2;
+    #kelsie-orb,
+    .mini-orb {
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid rgba(240, 242, 247, 0.90);
       border-radius: 50%;
       background:
         radial-gradient(
-          circle at 42% 38%,
-          rgba(255, 255, 255, 0.99) 0%,
-          rgba(236, 244, 241, 0.82) 30%,
-          rgba(191, 211, 204, 0.4) 58%,
-          rgba(105, 127, 120, 0.14) 78%,
-          transparent 100%
+          circle at 25% 19%,
+          rgba(255, 255, 255, 0.98) 0 6%,
+          rgba(240, 242, 247, 0.72) 7% 14%,
+          transparent 27%
+        ),
+        radial-gradient(
+          ellipse at 38% 29%,
+          rgba(238, 240, 246, 0.92) 0%,
+          rgba(203, 208, 220, 0.60) 24%,
+          rgba(167, 174, 191, 0.28) 46%,
+          transparent 64%
+        ),
+        conic-gradient(
+          from 218deg at 52% 50%,
+          #b8becb 0%,
+          #9ca3b1 18%,
+          #808899 38%,
+          #727a8b 58%,
+          #949baa 78%,
+          #b1b7c4 100%
+        ),
+        radial-gradient(
+          circle at 68% 75%,
+          #b8bec9 0%,
+          #9fa6b4 32%,
+          #808899 62%,
+          #6f7788 84%,
+          #626a79 100%
         );
-      filter: blur(1.7px);
-      opacity: 0.96;
-      animation:
-        orbCoreBreathe 3.4s ease-in-out infinite,
-        orbCoreDrift 7s ease-in-out infinite;
+      box-shadow:
+        var(--orb-shadow-primary),
+        var(--orb-shadow-secondary),
+        var(--orb-glow),
+        var(--orb-inner-light),
+        var(--orb-inner-shade),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.38);
+      filter: saturate(0.78) contrast(1.025);
+    }
+
+    #kelsie-orb::before,
+    .mini-orb::before {
+      content: "";
+      position: absolute;
+      inset: 4%;
+      z-index: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          ellipse at 34% 24%,
+          rgba(255, 255, 255, 0.58) 0%,
+          rgba(224, 227, 235, 0.20) 30%,
+          transparent 56%
+        ),
+        conic-gradient(
+          from 210deg at 52% 50%,
+          rgba(246, 247, 250, 0.30),
+          rgba(164, 172, 190, 0.10) 21%,
+          rgba(225, 228, 236, 0.16) 43%,
+          rgba(92, 101, 121, 0.12) 68%,
+          rgba(240, 242, 247, 0.26) 100%
+        );
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+        inset 5px 4px 9px rgba(255, 255, 255, 0.20),
+        inset -5px -7px 11px rgba(75, 83, 101, 0.15);
+      opacity: 0.98;
       pointer-events: none;
+      animation: orbReflectionDrift 7.8s ease-in-out infinite;
+    }
+
+    #kelsie-orb::after,
+    .mini-orb::after {
+      content: "";
+      position: absolute;
+      top: 12%;
+      left: 14%;
+      z-index: 5;
+      width: 55%;
+      height: 27%;
+      border-radius: 50%;
+      border-top: 2px solid rgba(255, 255, 255, 0.92);
+      border-left: 1px solid rgba(236, 239, 246, 0.58);
+      background:
+        linear-gradient(
+          162deg,
+          rgba(255, 255, 255, 0.68),
+          rgba(222, 226, 236, 0.16) 48%,
+          transparent 74%
+        );
+      filter: blur(0.25px);
+      transform: rotate(-20deg) skewX(-8deg);
+      transform-origin: center;
+      opacity: 0.94;
+      transition:
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    /* The old inner core is no longer needed. Both orbs now use the
+       same scaled glass surface, reflection and refraction layers. */
+    .orb-core {
+      display: none;
     }
 
     #orb-badge {
@@ -210,8 +237,8 @@
       height: 10px;
       border: 2px solid rgba(255, 255, 255, 0.97);
       border-radius: 50%;
-      background: linear-gradient(145deg, #7f8e89, #3c4846);
-      box-shadow: 0 2px 8px rgba(43, 56, 53, 0.34);
+      background: linear-gradient(145deg, #aab0bd, #808899);
+      box-shadow: 0 2px 8px rgba(31, 35, 39, 0.34);
       opacity: 0;
       transform: scale(0);
       transition:
@@ -370,14 +397,20 @@
     }
 
     #kelsie-orb:hover {
-      transform: scale(1.06);
+      transform: scale(1.075) translateY(-1px);
       box-shadow:
-        0 16px 33px rgba(30, 39, 40, 0.25),
-        0 6px 17px rgba(154, 178, 170, 0.31),
-        0 0 30px rgba(204, 221, 215, 0.38),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9),
-        inset 0 -5px 10px rgba(43, 55, 54, 0.18);
-      filter: brightness(1.04);
+        0 18px 35px rgba(70, 76, 91, 0.27),
+        0 6px 15px rgba(86, 94, 112, 0.18),
+        0 0 30px rgba(151, 160, 184, 0.46),
+        inset 5px 6px 10px rgba(255, 255, 255, 0.82),
+        inset -8px -10px 14px rgba(72, 79, 95, 0.26),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.52);
+      filter: brightness(1.025) contrast(1.015);
+    }
+
+    #kelsie-orb:hover::after {
+      transform: rotate(-16deg) skewX(-8deg) translate(1px, -1px);
+      opacity: 1;
     }
 
     #kelsie-orb:active {
@@ -389,7 +422,7 @@
     }
 
     #kelsie-orb:focus-visible {
-      outline: 3px solid rgba(137, 158, 151, 0.34);
+      outline: 3px solid rgba(128, 136, 153, 0.40);
       outline-offset: 4px;
     }
 
@@ -408,44 +441,35 @@
       0%,
       100% {
         box-shadow:
-          0 12px 27px rgba(30, 39, 40, 0.21),
-          0 4px 13px rgba(154, 178, 170, 0.24),
-          0 0 22px rgba(204, 221, 215, 0.28),
-          inset 0 1px 1px rgba(255, 255, 255, 0.84),
-          inset 0 -5px 10px rgba(43, 55, 54, 0.16);
+          var(--orb-shadow-primary),
+          var(--orb-shadow-secondary),
+          var(--orb-glow),
+          var(--orb-inner-light),
+          var(--orb-inner-shade),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.46);
       }
 
       50% {
         box-shadow:
-          0 14px 31px rgba(30, 39, 40, 0.24),
-          0 6px 18px rgba(154, 178, 170, 0.32),
-          0 0 31px rgba(204, 221, 215, 0.41),
-          inset 0 1px 1px rgba(255, 255, 255, 0.9),
-          inset 0 -5px 10px rgba(43, 55, 54, 0.17);
+          var(--orb-shadow-primary),
+          var(--orb-shadow-secondary),
+          0 0 28px rgba(151, 160, 184, 0.44),
+          var(--orb-inner-light),
+          var(--orb-inner-shade),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.55);
       }
     }
 
-    @keyframes orbCoreBreathe {
+    @keyframes orbReflectionDrift {
       0%,
       100% {
-        transform: scale(0.93);
-        opacity: 0.84;
+        transform: rotate(-1deg) translate(-0.3px, -0.3px);
+        opacity: 0.94;
       }
 
       50% {
-        transform: scale(1.07);
+        transform: rotate(1deg) translate(0.7px, 0.5px);
         opacity: 1;
-      }
-    }
-
-    @keyframes orbCoreDrift {
-      0%,
-      100% {
-        translate: -1px -1px;
-      }
-
-      50% {
-        translate: 2px 2px;
       }
     }
 
@@ -504,7 +528,7 @@
         linear-gradient(
           145deg,
           rgba(255, 255, 255, 0.94),
-          rgba(238, 243, 241, 0.87)
+          rgba(240, 241, 242, 0.9)
         );
       box-shadow:
         0 28px 80px rgba(25, 33, 34, 0.17),
@@ -522,12 +546,12 @@
       background:
         radial-gradient(
           circle at 92% 0%,
-          rgba(177, 198, 191, 0.16),
+          rgba(168, 172, 177, 0.13),
           transparent 31%
         ),
         radial-gradient(
           circle at 2% 90%,
-          rgba(210, 222, 218, 0.16),
+          rgba(214, 216, 219, 0.16),
           transparent 31%
         );
       pointer-events: none;
@@ -566,55 +590,15 @@
       width: 31px;
       height: 31px;
       flex: 0 0 auto;
-      overflow: hidden;
-      border: 1px solid rgba(83, 98, 94, 0.27);
-      border-radius: 50%;
-      background:
-        radial-gradient(
-          circle at 35% 28%,
-          rgba(255, 255, 255, 1) 0%,
-          rgba(246, 250, 248, 1) 22%,
-          rgba(221, 232, 228, 0.99) 52%,
-          rgba(161, 179, 173, 0.99) 79%,
-          rgba(92, 106, 101, 1) 100%
-        );
-      box-shadow:
-        0 4px 11px rgba(38, 49, 49, 0.18),
-        0 0 12px rgba(181, 202, 195, 0.22),
-        inset 0 1px 1px rgba(255, 255, 255, 0.76),
-        inset 0 -3px 6px rgba(43, 55, 54, 0.12);
+
+      --orb-shadow-primary: 0 6px 15px rgba(70, 76, 91, 0.22);
+      --orb-shadow-secondary: 0 2px 6px rgba(86, 94, 112, 0.14);
+      --orb-glow: 0 0 12px rgba(151, 160, 184, 0.30);
+      --orb-inner-light: inset 2px 3px 5px rgba(255, 255, 255, 0.72);
+      --orb-inner-shade: inset -4px -5px 7px rgba(72, 79, 95, 0.23);
+      animation: orbGlow 5.8s ease-in-out infinite;
     }
 
-    .mini-orb::before {
-      content: "";
-      position: absolute;
-      inset: 6px;
-      border-radius: 50%;
-      background:
-        radial-gradient(
-          circle at 42% 38%,
-          rgba(255, 255, 255, 0.96) 0%,
-          rgba(229, 238, 235, 0.65) 38%,
-          rgba(171, 196, 187, 0.22) 68%,
-          transparent 100%
-        );
-      filter: blur(1.4px);
-      opacity: 0.94;
-      animation: miniOrbBreathe 3.6s ease-in-out infinite;
-    }
-
-    @keyframes miniOrbBreathe {
-      0%,
-      100% {
-        transform: scale(0.93);
-        opacity: 0.82;
-      }
-
-      50% {
-        transform: scale(1.06);
-        opacity: 1;
-      }
-    }
 
     .identity-copy {
       display: flex;
@@ -704,7 +688,7 @@
 
     .header-icon-button:focus-visible,
     .header-actions > button:focus-visible {
-      outline: 3px solid rgba(141, 164, 156, 0.27);
+      outline: 3px solid rgba(136, 142, 148, 0.25);
       outline-offset: 3px;
     }
 
@@ -935,7 +919,7 @@
       padding: 16px 15px 11px;
       scroll-behavior: smooth;
       scrollbar-width: thin;
-      scrollbar-color: rgba(117, 135, 131, 0.32) transparent;
+      scrollbar-color: rgba(120, 126, 132, 0.3) transparent;
     }
 
     #message-list::-webkit-scrollbar,
@@ -946,7 +930,7 @@
     #message-list::-webkit-scrollbar-thumb,
     #history-list::-webkit-scrollbar-thumb {
       border-radius: 99px;
-      background: rgba(117, 135, 131, 0.32);
+      background: rgba(120, 126, 132, 0.3);
     }
 
     .message-row {
@@ -1361,7 +1345,7 @@
       overflow-y: auto;
       padding: 0 10px 11px;
       scrollbar-width: thin;
-      scrollbar-color: rgba(117, 135, 131, 0.32) transparent;
+      scrollbar-color: rgba(120, 126, 132, 0.3) transparent;
     }
 
     .history-state {
@@ -1595,7 +1579,7 @@
       overflow-y: auto;
       padding: 0 10px 11px;
       scrollbar-width: thin;
-      scrollbar-color: rgba(117, 135, 131, 0.32) transparent;
+      scrollbar-color: rgba(120, 126, 132, 0.3) transparent;
     }
 
     #reminder-list::-webkit-scrollbar {
@@ -1604,7 +1588,7 @@
 
     #reminder-list::-webkit-scrollbar-thumb {
       border-radius: 99px;
-      background: rgba(117, 135, 131, 0.32);
+      background: rgba(120, 126, 132, 0.3);
     }
 
     .reminder-state {
@@ -1905,50 +1889,6 @@
     }
 
     /* =====================================================
-       AVATAR
-    ===================================================== */
-
-    .avatar-stage {
-      position: absolute;
-      right: 62px;
-      bottom: 0;
-      width: 205px;
-      height: 225px;
-      pointer-events: auto;
-    }
-
-    #three-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    #three-canvas:focus-visible {
-      outline: 2px solid rgba(137, 162, 153, 0.4);
-      outline-offset: 2px;
-    }
-
-    .avatar-shadow {
-      position: absolute;
-      left: 50%;
-      bottom: 10px;
-      width: 88px;
-      height: 13px;
-      transform: translateX(-50%);
-      border-radius: 50%;
-      background: rgba(27, 36, 37, 0.12);
-      filter: blur(6px);
-      pointer-events: none;
-    }
-
-    /* =====================================================
        PROFILE BUTTON POLISH
     ===================================================== */
 
@@ -2237,7 +2177,7 @@
     }
 
     .settings-switch input:focus-visible + .settings-switch-track {
-      outline: 3px solid rgba(141, 164, 156, 0.27);
+      outline: 3px solid rgba(136, 142, 148, 0.25);
       outline-offset: 2px;
     }
 
@@ -2324,7 +2264,7 @@
         right: 9px;
         bottom: 9px;
         width: 315px;
-        height: 505px;
+        height: 305px;
       }
 
       #orb-reminder-popover {
@@ -2358,12 +2298,6 @@
         height: 28px;
         min-width: 28px;
         min-height: 28px;
-      }
-
-      .avatar-stage {
-        right: 50px;
-        width: 195px;
-        height: 212px;
       }
 
       #kelsie-settings-overlay {
@@ -2810,17 +2744,6 @@
           </section>
         </div>
       </div>
-
-      <div class="avatar-stage">
-        <div class="avatar-shadow" aria-hidden="true"></div>
-
-        <canvas
-          id="three-canvas"
-          role="button"
-          tabindex="0"
-          aria-label="Kelsie avatar. Click to make Kelsie wave."
-        ></canvas>
-      </div>
     </section>
   </div>
 
@@ -2982,10 +2905,6 @@
   </div>
 
   <script type="module">
-    import * as THREE from "three";
-    import {
-      GLTFLoader
-    } from "three/addons/loaders/GLTFLoader.js";
     import {
       getOrCreateUserId,
       initProfileUI,
@@ -2995,10 +2914,6 @@
        CONFIGURATION
     ===================================================== */
 
-    const MODEL_URL = new URL(
-      "./kelsie-avatar.glb",
-      import.meta.url
-    ).href;
 
     const USER_ID = getOrCreateUserId();
 
@@ -3024,7 +2939,6 @@
 
     const INACTIVITY_DELAY = 18000;
     const REMINDER_POLL_INTERVAL = 15000;
-    const CAMERA_HEIGHT = 2.6;
 
     /* =====================================================
        DOM
@@ -3083,8 +2997,6 @@
     const inlineReminderClose = document.getElementById("inline-reminder-close");
     const connectionDot = document.getElementById("connection-dot");
     const connectionLabel = document.getElementById("connection-label");
-    const canvas = document.getElementById("three-canvas");
-    const avatarStage = document.querySelector(".avatar-stage");
 
     /* =====================================================
        STATE
@@ -3108,7 +3020,7 @@
     let reminderRefreshBusy = false;
     let reminderPollTimer = null;
     let hasUnreadChat = false;
-    let loaded = false;
+    let loaded = true;
     let awaitingResponse = false;
     let creatingNewConversation = false;
     let switchingConversation = false;
@@ -3198,210 +3110,28 @@
     });
 
     /* =====================================================
-       THREE.JS
+       AMBIENT VISUAL STATE
+
+       The 3D stick figure has been intentionally removed. These
+       no-op helpers preserve the existing chat flow without loading
+       Three.js, a GLB model, or a canvas renderer.
     ===================================================== */
 
-    const scene = new THREE.Scene();
-    scene.background = null;
-
-    const camera = new THREE.OrthographicCamera(
-      -1,
-      1,
-      1,
-      -1,
-      0.1,
-      100
-    );
-
-    camera.position.set(0, 1, 5);
-    camera.lookAt(0, 1, 0);
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true,
-      premultipliedAlpha: true,
-    });
-
-    renderer.setClearColor(0x000000, 0);
-    renderer.setPixelRatio(
-      Math.min(window.devicePixelRatio, 2)
-    );
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.NoToneMapping;
-
-    const clock = new THREE.Clock();
-    const characterGroup = new THREE.Group();
-    scene.add(characterGroup);
-
-    let model = null;
     let mixer = null;
     let activeAction = null;
     let activeGesture = null;
-    const actions = new Map();
-
-    function getAction(name) {
-      return actions.get(name.toLowerCase()) ?? null;
-    }
 
     function playIdle() {
-      if (!isOpen) {
-        return;
-      }
-
-      const idle = getAction("idle");
-
-      if (!idle || activeGesture) {
-        return;
-      }
-
-      if (activeAction === idle && idle.isRunning()) {
-        return;
-      }
-
-      if (activeAction && activeAction !== idle) {
-        activeAction.fadeOut(0.12);
-      }
-
-      idle.reset();
-      idle.enabled = true;
-      idle.clampWhenFinished = false;
-      idle.setLoop(THREE.LoopRepeat, Infinity);
-      idle.fadeIn(0.12);
-      idle.play();
-      activeAction = idle;
-    }
-
-    function playGesture(name) {
-      if (!mixer || !isOpen) {
-        return false;
-      }
-
-      const action = getAction(name);
-
-      if (!action) {
-        return false;
-      }
-
-      if (activeGesture) {
-        activeGesture.stop();
-      }
-
-      if (activeAction && activeAction !== action) {
-        activeAction.fadeOut(0.1);
-      }
-
-      activeGesture = action;
-      action.reset();
-      action.enabled = true;
-      action.clampWhenFinished = true;
-      action.setLoop(THREE.LoopOnce, 1);
-      action.fadeIn(0.1);
-      action.play();
-      activeAction = action;
-
-      return true;
+      return false;
     }
 
     function wave() {
-      return playGesture("wave");
+      return false;
     }
 
     function think() {
-      return playGesture("think");
+      return false;
     }
-
-    function fitModelToStage(object) {
-      object.updateMatrixWorld(true);
-
-      let bounds = new THREE.Box3().setFromObject(object);
-      const initialSize = bounds.getSize(new THREE.Vector3());
-
-      if (initialSize.y <= 0) {
-        throw new Error("Avatar has no measurable height.");
-      }
-
-      object.scale.setScalar(
-        (CAMERA_HEIGHT * 0.86) / initialSize.y
-      );
-
-      object.updateMatrixWorld(true);
-      bounds = new THREE.Box3().setFromObject(object);
-
-      const center = bounds.getCenter(new THREE.Vector3());
-
-      object.position.x -= center.x;
-      object.position.y -= bounds.min.y;
-      object.position.z -= center.z;
-      object.updateMatrixWorld(true);
-    }
-
-    const loader = new GLTFLoader();
-
-    loader.load(
-      MODEL_URL,
-      (gltf) => {
-        model = gltf.scene;
-        model.name = "KelsieAvatar";
-
-        model.traverse((child) => {
-          if (!child.isMesh) {
-            return;
-          }
-
-          child.frustumCulled = false;
-          child.castShadow = false;
-          child.receiveShadow = false;
-
-          const materials = Array.isArray(child.material)
-            ? child.material
-            : [child.material];
-
-          materials.forEach((material) => {
-            if (!material) {
-              return;
-            }
-
-            material.toneMapped = false;
-            material.needsUpdate = true;
-          });
-        });
-
-        fitModelToStage(model);
-        characterGroup.add(model);
-
-        if (gltf.animations?.length) {
-          mixer = new THREE.AnimationMixer(model);
-
-          gltf.animations.forEach((clip) => {
-            actions.set(
-              clip.name.toLowerCase(),
-              mixer.clipAction(clip)
-            );
-          });
-
-          mixer.addEventListener("finished", (event) => {
-            if (event.action !== activeGesture) {
-              return;
-            }
-
-            activeGesture = null;
-            activeAction = null;
-            playIdle();
-          });
-        }
-
-        loaded = true;
-
-        if (isOpen) {
-          playIdle();
-        }
-      },
-      undefined,
-      (error) => {
-        console.error("Could not load Kelsie:", error);
-      }
-    );
 
     /* =====================================================
        CONNECTION STATUS
@@ -5400,20 +5130,6 @@
       collapseWidget({ force: true });
     });
 
-    canvas.addEventListener("click", () => {
-      wave();
-      registerActivity();
-    });
-
-    canvas.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") {
-        return;
-      }
-
-      event.preventDefault();
-      wave();
-      registerActivity();
-    });
 
     panel.addEventListener("pointerdown", registerActivity);
 
@@ -5432,39 +5148,6 @@
         refreshReminderState({ silent: true });
       }
     });
-
-    /* =====================================================
-       RENDERING
-    ===================================================== */
-
-    function animate() {
-      window.requestAnimationFrame(animate);
-
-      const delta = Math.min(clock.getDelta(), 0.05);
-
-      if (mixer && isOpen) {
-        mixer.update(delta);
-      }
-
-      if (isOpen) {
-        renderer.render(scene, camera);
-      }
-    }
-
-    function resizeRenderer() {
-      const width = Math.max(canvas.clientWidth, 1);
-      const height = Math.max(canvas.clientHeight, 1);
-      const aspect = width / height;
-      const halfHeight = CAMERA_HEIGHT / 2;
-      const halfWidth = halfHeight * aspect;
-
-      camera.left = -halfWidth;
-      camera.right = halfWidth;
-      camera.top = halfHeight;
-      camera.bottom = -halfHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height, false);
-    }
 
     /* =====================================================
        PUBLIC API
@@ -5550,8 +5233,6 @@
 
     async function initializeKelsie() {
       updateSendButton();
-      resizeRenderer();
-      animate();
       polishProfileButtons(document);
 
       await initProfileUI({
@@ -5583,14 +5264,6 @@
 
       await refreshReminderState({ silent: true });
       startReminderPolling();
-
-      window.addEventListener("resize", resizeRenderer);
-
-      const resizeObserver = new ResizeObserver(
-        resizeRenderer
-      );
-
-      resizeObserver.observe(avatarStage);
     }
 
     initializeKelsie().catch((error) => {

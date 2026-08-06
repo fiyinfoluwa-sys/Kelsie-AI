@@ -10,6 +10,8 @@ const DEFAULT_PROFILE = Object.freeze({
     quiet_start: "23:00",
     quiet_end: "08:00",
     proactivity_level: "balanced",
+    memory_enabled: true,
+    adaptive_tone: true,
 });
 
 
@@ -86,24 +88,48 @@ async function requestJson(
 async function fetchProfile(
     userId
 ) {
-    return requestJson(
+    const result = await requestJson(
         `${PROFILE_API}/${encodeURIComponent(
             userId
         )}`
     );
+
+    if (
+        result &&
+        typeof result === "object" &&
+        "profile" in result
+    ) {
+        return result;
+    }
+
+    return {
+        exists: Boolean(result),
+        profile: result || null,
+    };
 }
 
 
 async function createProfile(
     profile
 ) {
-    return requestJson(
+    const result = await requestJson(
         PROFILE_API,
         {
             method: "POST",
             body: JSON.stringify(profile),
         }
     );
+
+    return (
+        result &&
+        typeof result === "object" &&
+        "profile" in result
+    )
+        ? result
+        : {
+            exists: true,
+            profile: result,
+        };
 }
 
 
@@ -111,7 +137,7 @@ async function updateProfile(
     userId,
     updates
 ) {
-    return requestJson(
+    const result = await requestJson(
         `${PROFILE_API}/${encodeURIComponent(
             userId
         )}`,
@@ -120,6 +146,17 @@ async function updateProfile(
             body: JSON.stringify(updates),
         }
     );
+
+    return (
+        result &&
+        typeof result === "object" &&
+        "profile" in result
+    )
+        ? result
+        : {
+            exists: true,
+            profile: result,
+        };
 }
 
 
@@ -295,6 +332,56 @@ function injectProfileStyles() {
             transition:
                 border-color 0.2s ease,
                 box-shadow 0.2s ease;
+        }
+
+        .profile-toggle-row {
+            grid-column: 1 / -1;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+
+            min-height: 52px;
+            padding: 10px 12px;
+
+            border: 1px solid
+                rgba(21,29,43,0.07);
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,0.62);
+        }
+
+        .profile-toggle-copy {
+            display: grid;
+            gap: 3px;
+        }
+
+        .profile-toggle-copy strong {
+            color: #273142;
+
+            font-size: 11px;
+            font-weight: 650;
+        }
+
+        .profile-toggle-copy span {
+            color: #7a8494;
+
+            font-size: 9px;
+            line-height: 1.35;
+        }
+
+        .profile-toggle-row
+        input[type="checkbox"] {
+            width: 36px;
+            height: 20px;
+
+            margin: 0;
+
+            accent-color: #808899;
+            cursor: pointer;
         }
 
         .profile-field input:focus,
@@ -534,6 +621,7 @@ function createSettingsButton(
                 stroke="currentColor"
                 stroke-width="1.6"
             />
+
             <path
                 d="M19.1 13.8a7.6 7.6 0 0 0 0-3.6l2-1.55-2-3.45-2.47 1a7.5 7.5 0 0 0-3.12-1.8L13.16 2h-4l-.35 2.4a7.5 7.5 0 0 0-3.12 1.8l-2.47-1-2 3.45 2 1.55a7.6 7.6 0 0 0 0 3.6l-2 1.55 2 3.45 2.47-1a7.5 7.5 0 0 0 3.12 1.8l.35 2.4h4l.35-2.4a7.5 7.5 0 0 0 3.12-1.8l2.47 1 2-3.45-2-1.55Z"
                 stroke="currentColor"
@@ -877,6 +965,50 @@ function createProfileOverlays(
                         type="time"
                     />
                 </div>
+
+                <label
+                    class="profile-toggle-row"
+                    for="settings-memory-enabled"
+                >
+                    <span class="profile-toggle-copy">
+                        <strong>
+                            Long-term memory
+                        </strong>
+
+                        <span>
+                            Remember useful context
+                            across conversations.
+                        </span>
+                    </span>
+
+                    <input
+                        id="settings-memory-enabled"
+                        type="checkbox"
+                        checked
+                    />
+                </label>
+
+                <label
+                    class="profile-toggle-row"
+                    for="settings-adaptive-tone"
+                >
+                    <span class="profile-toggle-copy">
+                        <strong>
+                            Adaptive conversation style
+                        </strong>
+
+                        <span>
+                            Match your directness, tone
+                            and usual reply length.
+                        </span>
+                    </span>
+
+                    <input
+                        id="settings-adaptive-tone"
+                        type="checkbox"
+                        checked
+                    />
+                </label>
             </div>
 
             <div class="profile-actions">
@@ -1058,6 +1190,18 @@ export async function initProfileUI({
             currentProfile
                 .proactivity_level ||
             "balanced";
+
+        document.getElementById(
+            "settings-memory-enabled"
+        ).checked =
+            currentProfile
+                .memory_enabled !== false;
+
+        document.getElementById(
+            "settings-adaptive-tone"
+        ).checked =
+            currentProfile
+                .adaptive_tone !== false;
     }
 
     function openSettings() {
@@ -1139,8 +1283,11 @@ export async function initProfileUI({
                             "[data-profile-mode]"
                         )
                         .forEach(
-                            (modeButton) => {
-                                modeButton.classList
+                            (
+                                modeButton
+                            ) => {
+                                modeButton
+                                    .classList
                                     .toggle(
                                         "selected",
                                         modeButton ===
@@ -1222,6 +1369,7 @@ export async function initProfileUI({
                         id: userId,
                         name: draft.name,
                         mode: draft.mode,
+
                         timezone:
                             draft.timezone,
 
@@ -1238,6 +1386,12 @@ export async function initProfileUI({
                         proactivity_level:
                             draft
                                 .proactivity_level,
+
+                        memory_enabled:
+                            draft.memory_enabled,
+
+                        adaptive_tone:
+                            draft.adaptive_tone,
                     });
 
                 profile =
@@ -1322,6 +1476,16 @@ export async function initProfileUI({
                     document.getElementById(
                         "settings-proactivity"
                     ).value,
+
+                memory_enabled:
+                    document.getElementById(
+                        "settings-memory-enabled"
+                    ).checked,
+
+                adaptive_tone:
+                    document.getElementById(
+                        "settings-adaptive-tone"
+                    ).checked,
             };
 
             if (!updates.name) {

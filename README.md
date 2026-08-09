@@ -1,43 +1,32 @@
-# Kelsie AI 🤖
+# Kelsie AI
 
-A powerful, web-connected AI chatbot built with Python and Hugging Face transformers. Kelsie combines local AI processing with real-time Google Search integration for accurate, up-to-date information.
+Kelsie is an ambient personal AI assistant designed to help you think, understand, communicate, and keep track of things without requiring you to constantly switch into a separate AI app.
 
-## Features ✨
+Rather than always jumping straight to an answer, Kelsie can help users work through information themselves — while still allowing them to ask for direct help when they want it.
 
-- **Web-Connected Intelligence**: Real-time Google Search integration for current information
-- **Local AI Processing**: Uses Microsoft DialoGPT-medium model running locally
-- **Conversation Memory**: Maintains context across conversation turns
-- **Apple Silicon Optimized**: Automatic MPS detection for faster inference
-- **Free & Open Source**: No API costs for the core functionality
-- **Easy Setup**: Simple installation and configuration
+> **AI that can help you think, not just finish.**
 
-## Tech Stack 🛠️
+---
 
-- **Python 3.9+**
-- **PyTorch** - AI model inference
-- **Hugging Face Transformers** - Pre-trained language models
-- **Google Custom Search API** - Real-time web search
-- **Requests** - HTTP library for API calls
+## What Kelsie does
 
-## Installation 📦
+Kelsie currently runs as a browser-based AI assistant with a Chrome extension.
 
-1. **Clone the repository**
-```bash
-git clone https://github.com/fiyinfoluwa-sys/Kelsie-AI.git
-cd Kelsie-AI
+### Context-aware reading
 
-2. Create and activate a virtual environment:
-python -m venv venv
-source venv/bin/activate
+When Kelsie detects that you are meaningfully engaging with a readable webpage, it can offer:
 
-3. Install dependencies:
-pip install --upgrade pip
-pip install -r requirements.txt
-# Optional for quantization/large models:
-pip install bitsandbytes accelerate
+- **Help me understand it** — breaks down the structure of the page and asks one useful question at a time.
+- **Summarize it** — provides a direct summary adapted to the type of content.
+- **I have questions about this page** — brings the current page into the normal Kelsie conversation as temporary context.
 
-4. RUN KELSIE
-export KELSIE_MODEL="microsoft/DialoGPT-medium"
-python backend/kelsie_cli_transformers.py
+Kelsie adjusts depending on what the user is reading, including:
 
-Type a message after 'You:' and press Enter. Type 'quit' to exit. 
+- News
+- Opinion and argumentative writing
+- Research
+- Tutorials and how-to guides
+- Explainers
+- Documentation and reference material
+
+Page context is treated as optional context rather than a separate "page mode."

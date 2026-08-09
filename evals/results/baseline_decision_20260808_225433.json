@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-08-08T22:54:33.592231-04:00",
+  "mode": "decision",
+  "model": "llama-3.3-70b-versatile",
+  "provider": "groq",
+  "stopped_for_rate_limit": true,
+  "summary": {
+    "attempted_cases": 1,
+    "completed_cases": 0,
+    "errors": 0,
+    "rate_limited_cases": 1,
+    "auto_checks": 0,
+    "auto_passed": 0,
+    "auto_failed": 0,
+    "auto_percent": null,
+    "critical_failures": 0,
+    "by_category": {},
+    "manual_review_pending": 0
+  },
+  "results": [
+    {
+      "id": "C01",
+      "category": "conversation_intent",
+      "status": "rate_limited",
+      "rate_limited_layer": "decision",
+      "provider_log": "Decision-layer error (groq): Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kza35e8te4mrkgmr2t458bzy` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 98837, Requested 3464. Please try again in 33m8.063999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "expected": {
+        "intent": "context_sharing",
+        "ask_follow_up": false,
+        "create_open_loop": false,
+        "response_goal": "brief acknowledgement; do not assume help is wanted"
+      }
+    }
+  ]
+}

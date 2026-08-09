@@ -1,0 +1,898 @@
+:host {
+    all: initial;
+
+    --kelsie-orb: #808899;
+    --kelsie-text: #292d35;
+
+    position: fixed;
+
+    width: 100px;
+    height: 40px;
+
+    z-index: 2147483647;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    line-height: 1.4;
+
+    color:
+        var(--kelsie-text);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+button {
+    font: inherit;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* =========================================================
+   SHELL
+========================================================= */
+
+.kelsie-shell {
+    position: relative;
+
+    width: 100px;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================================
+   EDGE TAB
+========================================================= */
+
+.kelsie-launcher {
+    position: relative;
+
+    width: 100px;
+    height: 38px;
+
+    margin: 0;
+
+    padding:
+        0
+        15px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border:
+        1px solid
+        rgba(
+            38,
+            43,
+            52,
+            0.11
+        );
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(
+                255,
+                255,
+                255,
+                0.95
+            ),
+            rgba(
+                245,
+                246,
+                248,
+                0.89
+            )
+        );
+
+    box-shadow:
+        0
+        5px
+        15px
+        rgba(
+            25,
+            29,
+            38,
+            0.08
+        ),
+        inset
+        0
+        1px
+        0
+        rgba(
+            255,
+            255,
+            255,
+            0.96
+        );
+
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
+
+    color:
+        var(--kelsie-text);
+
+    cursor: grab;
+
+    outline: none;
+
+    user-select: none;
+
+    touch-action: none;
+
+    -webkit-user-select: none;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+    transition:
+        background 140ms ease,
+        box-shadow 140ms ease,
+        opacity 140ms ease,
+        transform 140ms ease;
+}
+
+/* =========================================================
+   ATTACHED EDGE SHAPES
+========================================================= */
+
+:host(
+    [data-edge="right"]
+)
+.kelsie-launcher {
+    border-right: 0;
+
+    border-radius:
+        19px
+        0
+        0
+        19px;
+}
+
+:host(
+    [data-edge="left"]
+)
+.kelsie-launcher {
+    border-left: 0;
+
+    border-radius:
+        0
+        19px
+        19px
+        0;
+}
+
+:host(
+    [data-edge="top"]
+)
+.kelsie-launcher {
+    border-top: 0;
+
+    border-radius:
+        0
+        0
+        19px
+        19px;
+}
+
+:host(
+    [data-edge="bottom"]
+)
+.kelsie-launcher {
+    border-bottom: 0;
+
+    border-radius:
+        19px
+        19px
+        0
+        0;
+}
+
+/* =========================================================
+   MINI ORB
+========================================================= */
+
+.kelsie-launcher-orb {
+    position: relative;
+
+    width: 13px;
+    height: 13px;
+
+    flex:
+        0
+        0
+        13px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 24%,
+            rgba(
+                255,
+                255,
+                255,
+                0.74
+            )
+            0%,
+
+            rgba(
+                255,
+                255,
+                255,
+                0.21
+            )
+            25%,
+
+            rgba(
+                255,
+                255,
+                255,
+                0
+            )
+            45%
+        ),
+
+        linear-gradient(
+            145deg,
+            #9ba2b0 0%,
+            var(--kelsie-orb) 55%,
+            #697181 100%
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.54
+        );
+
+    box-shadow:
+        inset
+        0
+        1px
+        1px
+        rgba(
+            255,
+            255,
+            255,
+            0.72
+        ),
+
+        inset
+        0
+        -2px
+        4px
+        rgba(
+            48,
+            54,
+            66,
+            0.1
+        ),
+
+        0
+        1px
+        3px
+        rgba(
+            38,
+            43,
+            52,
+            0.2
+        );
+}
+
+.kelsie-launcher-label {
+    display: block;
+
+    font-size: 14px;
+
+    line-height: 1;
+
+    font-weight: 560;
+
+    letter-spacing:
+        -0.01em;
+
+    color: #363b45;
+
+    white-space: nowrap;
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.kelsie-launcher:hover {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(
+                255,
+                255,
+                255,
+                0.99
+            ),
+            rgba(
+                247,
+                248,
+                250,
+                0.95
+            )
+        );
+
+    box-shadow:
+        0
+        6px
+        17px
+        rgba(
+            25,
+            29,
+            38,
+            0.1
+        ),
+        inset
+        0
+        1px
+        0
+        rgba(
+            255,
+            255,
+            255,
+            1
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+.kelsie-launcher:active {
+    cursor: grabbing;
+}
+
+.kelsie-launcher:focus-visible {
+    outline:
+        2px solid
+        rgba(
+            128,
+            136,
+            153,
+            0.45
+        );
+
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   FIRST-USE MOVE HINT
+========================================================= */
+
+.kelsie-move-hint {
+    position: absolute;
+
+    z-index: 5;
+
+    padding:
+        7px
+        10px;
+
+    border:
+        1px solid
+        rgba(
+            38,
+            43,
+            52,
+            0.09
+        );
+
+    border-radius: 10px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.97
+        );
+
+    box-shadow:
+        0
+        5px
+        18px
+        rgba(
+            25,
+            29,
+            38,
+            0.10
+        );
+
+    color: #555b66;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+
+    animation:
+        kelsie-hint-in
+        180ms
+        ease-out;
+}
+
+:host(
+    [data-edge="right"]
+)
+.kelsie-move-hint {
+    right:
+        calc(
+            100% + 10px
+        );
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+:host(
+    [data-edge="left"]
+)
+.kelsie-move-hint {
+    left:
+        calc(
+            100% + 10px
+        );
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+}
+
+:host(
+    [data-edge="top"]
+)
+.kelsie-move-hint {
+    top:
+        calc(
+            100% + 10px
+        );
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+}
+
+:host(
+    [data-edge="bottom"]
+)
+.kelsie-move-hint {
+    bottom:
+        calc(
+            100% + 10px
+        );
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+}
+
+/* =========================================================
+   DRAGGING
+========================================================= */
+
+:host(
+    [data-dragging="true"]
+)
+.kelsie-launcher {
+    cursor: grabbing;
+
+    border:
+        1px solid
+        rgba(
+            38,
+            43,
+            52,
+            0.13
+        );
+
+    border-radius: 19px;
+
+    box-shadow:
+        0
+        9px
+        24px
+        rgba(
+            25,
+            29,
+            38,
+            0.15
+        );
+
+    transform:
+        scale(1.015);
+
+    opacity: 0.96;
+}
+
+/* ---------------------------------------------------------
+   Snap preview
+--------------------------------------------------------- */
+
+:host(
+    [data-dragging="true"]
+    [data-preview-edge="left"]
+)
+.kelsie-launcher {
+    border-left: 0;
+
+    border-radius:
+        0
+        19px
+        19px
+        0;
+}
+
+:host(
+    [data-dragging="true"]
+    [data-preview-edge="right"]
+)
+.kelsie-launcher {
+    border-right: 0;
+
+    border-radius:
+        19px
+        0
+        0
+        19px;
+}
+
+:host(
+    [data-dragging="true"]
+    [data-preview-edge="top"]
+)
+.kelsie-launcher {
+    border-top: 0;
+
+    border-radius:
+        0
+        0
+        19px
+        19px;
+}
+
+:host(
+    [data-dragging="true"]
+    [data-preview-edge="bottom"]
+)
+.kelsie-launcher {
+    border-bottom: 0;
+
+    border-radius:
+        19px
+        19px
+        0
+        0;
+}
+
+/* =========================================================
+   OPEN STATE
+
+   The edge tab disappears while Kelsie is open.
+========================================================= */
+
+.kelsie-shell.panel-open
+.kelsie-launcher {
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transform: none;
+}
+
+.kelsie-shell.panel-open
+.kelsie-move-hint {
+    display: none !important;
+}
+
+/* =========================================================
+   REAL KELSIE WIDGET FRAME
+========================================================= */
+
+.kelsie-panel-host {
+    position: fixed;
+
+    left: 8px;
+    top: 8px;
+
+    width: 390px;
+    height: 580px;
+
+    max-width:
+        calc(
+            100vw - 16px
+        );
+
+    max-height:
+        calc(
+            100vh - 16px
+        );
+
+    overflow: hidden;
+
+    border: 0;
+
+    background: transparent;
+
+    pointer-events: auto;
+}
+
+.kelsie-widget-frame {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    opacity: 0;
+
+    transition:
+        opacity
+        150ms
+        ease;
+}
+
+.kelsie-panel-host.frame-ready
+.kelsie-widget-frame {
+    opacity: 1;
+}
+
+/* =========================================================
+   LOADING STATE
+========================================================= */
+
+.kelsie-frame-loading {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    z-index: 2;
+
+    transform:
+        translate(
+            -50%,
+            -50%
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        9px
+        12px;
+
+    border:
+        1px solid
+        rgba(
+            38,
+            43,
+            52,
+            0.08
+        );
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.94
+        );
+
+    box-shadow:
+        0
+        8px
+        24px
+        rgba(
+            25,
+            29,
+            38,
+            0.09
+        );
+
+    color: #646b77;
+
+    font-size: 11px;
+
+    font-weight: 540;
+
+    white-space: nowrap;
+
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
+}
+
+.kelsie-loading-orb {
+    width: 11px;
+    height: 11px;
+
+    flex:
+        0
+        0
+        11px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 24%,
+            rgba(
+                255,
+                255,
+                255,
+                0.74
+            ),
+            rgba(
+                255,
+                255,
+                255,
+                0
+            )
+            45%
+        ),
+
+        linear-gradient(
+            145deg,
+            #9ba2b0,
+            #808899 55%,
+            #697181
+        );
+
+    box-shadow:
+        0
+        1px
+        4px
+        rgba(
+            38,
+            43,
+            52,
+            0.20
+        );
+
+    animation:
+        kelsie-loading-pulse
+        1.4s
+        ease-in-out
+        infinite;
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes
+kelsie-hint-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes
+kelsie-loading-pulse {
+    0%,
+    100% {
+        opacity: 0.55;
+
+        transform:
+            scale(0.92);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform:
+            scale(1.06);
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
+    .kelsie-launcher,
+    .kelsie-move-hint,
+    .kelsie-widget-frame,
+    .kelsie-loading-orb {
+        animation:
+            none !important;
+
+        transition:
+            none !important;
+    }
+}
+
+/* =========================================================
+   SMALL VIEWPORTS
+========================================================= */
+
+@media (
+    max-width: 500px
+) {
+    :host {
+        width: 94px;
+    }
+
+    .kelsie-shell {
+        width: 94px;
+    }
+
+    .kelsie-launcher {
+        width: 94px;
+    }
+
+    .kelsie-panel-host {
+        width:
+            calc(
+                100vw - 16px
+            );
+
+        height:
+            calc(
+                100vh - 16px
+            );
+    }
+}

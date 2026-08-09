@@ -353,13 +353,31 @@ def _normalize_profile(
     normalized["user_id"] = str(resolved_user_id)
     normalized["id"] = str(resolved_user_id)
     normalized.setdefault("name", "")
+
+    # Kept for backwards compatibility. The current onboarding no longer asks
+    # users to classify themselves as student/professional/both.
     normalized.setdefault("mode", "both")
+
     normalized.setdefault("timezone", "America/Toronto")
     normalized.setdefault("daily_overview_enabled", True)
-    normalized.setdefault("quiet_hours_start", None)
-    normalized.setdefault("quiet_hours_end", None)
+
+    normalized.setdefault("quiet_hours_enabled", True)
+    normalized.setdefault("quiet_hours_start", "23:00")
+    normalized.setdefault("quiet_hours_end", "08:00")
+
     normalized.setdefault("proactivity", "balanced")
-    normalized.setdefault("proactivity_level", normalized.get("proactivity", "balanced"))
+    normalized.setdefault(
+        "proactivity_level",
+        normalized.get("proactivity", "balanced"),
+    )
+
+    normalized.setdefault("initial_context", "")
+
+    normalized.setdefault("accessibility_large_text", False)
+    normalized.setdefault("accessibility_high_contrast", False)
+    normalized.setdefault("accessibility_reduce_motion", False)
+    normalized.setdefault("accessibility_simplified_language", False)
+
     normalized.setdefault("memory_enabled", True)
     normalized.setdefault("adaptive_tone", True)
     return normalized

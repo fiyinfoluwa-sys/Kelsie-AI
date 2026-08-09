@@ -1,0 +1,149 @@
+{
+  "generated_at": "2026-08-08T22:46:10.378587-04:00",
+  "model": "llama-3.3-70b-versatile",
+  "provider": "groq",
+  "summary": {
+    "cases": 3,
+    "errors": 2,
+    "auto_checks": 2,
+    "auto_passed": 2,
+    "auto_failed": 0,
+    "auto_percent": 100.0,
+    "critical_failures": 0,
+    "by_category": {
+      "conversation_intent": {
+        "checks": 2,
+        "passed": 2,
+        "failed": 0
+      }
+    },
+    "manual_review_pending": 1
+  },
+  "results": [
+    {
+      "id": "C01",
+      "category": "conversation_intent",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "I have an essay about healthcare in Nigeria."
+        }
+      ],
+      "expected": {
+        "intent": "context_sharing",
+        "ask_follow_up": false,
+        "create_open_loop": false,
+        "response_goal": "brief acknowledgement; do not assume help is wanted"
+      },
+      "observed": {
+        "ask_follow_up": false,
+        "create_reminder": false,
+        "create_open_loop": false,
+        "complete_open_loop": false,
+        "dismiss_open_loop": false,
+        "surface_other_items": false,
+        "selected_memory": []
+      },
+      "decision": {
+        "message_kind": "context",
+        "response_goal": "acknowledge the essay topic",
+        "reply_mode": "brief_acknowledgement",
+        "ask_follow_up": false,
+        "close_topic": false,
+        "max_sentences": 1,
+        "asks_for_item_summary": false,
+        "active_topic": {
+          "type": "conversation",
+          "id": null,
+          "label": "healthcare in Nigeria essay"
+        },
+        "reference_confidence": 0.9,
+        "reminder_requested": false,
+        "cancel_pending_reminder": false,
+        "open_loop": null,
+        "complete_open_loop_id": null,
+        "dismiss_open_loop_id": null,
+        "needs_clarification": false,
+        "clarification_question": null,
+        "memory_updates": [
+          {
+            "category": "situations",
+            "key": "current_essay",
+            "value": "healthcare in Nigeria",
+            "confidence": 0.9
+          }
+        ],
+        "conversation_summary": "Discussing an essay about healthcare in Nigeria",
+        "facts_known": [
+          "essay topic is healthcare in Nigeria"
+        ],
+        "facts_unknown": [
+          "essay details",
+          "user's goals for the essay"
+        ],
+        "should_reference_other_items": false
+      },
+      "reminder_parse": null,
+      "reply": "Got it.",
+      "auto_checks": [
+        {
+          "key": "ask_follow_up",
+          "expected": false,
+          "observed": false,
+          "passed": true,
+          "critical": false
+        },
+        {
+          "key": "create_open_loop",
+          "expected": false,
+          "observed": false,
+          "passed": true,
+          "critical": true
+        }
+      ],
+      "auto_summary": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "percent": 100.0,
+        "critical_failures": []
+      },
+      "manual_review": {
+        "expected_intent": "context_sharing",
+        "expected_reference_resolution": null,
+        "expected_use_memory": null,
+        "expected_response_goal": "brief acknowledgement; do not assume help is wanted",
+        "manual_scores": {
+          "intent_accuracy": null,
+          "context_reference_accuracy": null,
+          "restraint": null,
+          "state_change_accuracy": null,
+          "helpfulness": null
+        },
+        "manual_total_out_of_10": null,
+        "review_notes": ""
+      },
+      "notes": "Not every statement is a request."
+    },
+    {
+      "id": "C02",
+      "category": "conversation_intent",
+      "error": "Decision layer returned no result.",
+      "expected": {
+        "intent": "planning",
+        "ask_follow_up": false,
+        "response_goal": "give a concrete essay structure, not generic research advice"
+      }
+    },
+    {
+      "id": "C03",
+      "category": "conversation_intent",
+      "error": "Decision layer returned no result.",
+      "expected": {
+        "intent": "completion_or_update",
+        "ask_follow_up": false,
+        "response_goal": "brief acknowledgement"
+      }
+    }
+  ]
+}

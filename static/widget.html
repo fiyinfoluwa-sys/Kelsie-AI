@@ -8,6 +8,15 @@
   />
   <title>Kelsie</title>
 
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
   <style>
     :root {
       --ink: #1d2326;
@@ -75,7 +84,7 @@
       bottom: 18px;
       z-index: 99999;
       width: 350px;
-      height: 320px;
+      height: 540px;
       pointer-events: none;
     }
 
@@ -518,7 +527,7 @@
       top: 0;
       right: 0;
       width: 330px;
-      height: 320px;
+      height: 500px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -2241,6 +2250,82 @@
       opacity: 0.55;
     }
 
+    .settings-textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      padding: 10px 11px;
+      border: 1px solid rgba(49, 61, 60, 0.1);
+      border-radius: 13px;
+      outline: none;
+      background: rgba(248, 250, 249, 0.92);
+      color: var(--ink);
+      font: inherit;
+      font-size: 10px;
+      line-height: 1.45;
+      transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .settings-textarea:focus {
+      border-color: rgba(128, 136, 153, 0.48);
+      box-shadow: 0 0 0 4px rgba(128, 136, 153, 0.09);
+    }
+
+    .settings-field-help {
+      color: #838c8a;
+      font-size: 8.6px;
+      line-height: 1.4;
+    }
+
+    body.kelsie-large-text .message,
+    body.kelsie-large-text #chat-input,
+    body.kelsie-large-text .settings-input,
+    body.kelsie-large-text .settings-select,
+    body.kelsie-large-text .settings-time,
+    body.kelsie-large-text .settings-textarea,
+    body.kelsie-large-text .conversation-title,
+    body.kelsie-large-text .reminder-title {
+      font-size: 112% !important;
+    }
+
+    body.kelsie-high-contrast .chat-card,
+    body.kelsie-high-contrast .kelsie-settings-card {
+      border-color: rgba(47, 52, 64, 0.24) !important;
+      background: rgba(255, 255, 255, 0.99) !important;
+    }
+
+    body.kelsie-high-contrast .identity-name,
+    body.kelsie-high-contrast .message,
+    body.kelsie-high-contrast .settings-toggle-title,
+    body.kelsie-high-contrast .settings-field > label,
+    body.kelsie-high-contrast .settings-field-label {
+      color: #171a22 !important;
+    }
+
+    body.kelsie-high-contrast .identity-status,
+    body.kelsie-high-contrast .settings-toggle-description,
+    body.kelsie-high-contrast .settings-field-help {
+      color: #4f5663 !important;
+    }
+
+    body.kelsie-reduce-motion #kelsie-orb,
+    body.kelsie-reduce-motion .orb-core,
+    body.kelsie-reduce-motion .mini-orb::before,
+    body.kelsie-reduce-motion #kelsie-panel,
+    body.kelsie-reduce-motion #chat-view,
+    body.kelsie-reduce-motion #history-view,
+    body.kelsie-reduce-motion #reminders-view,
+    body.kelsie-reduce-motion #orb-reminder-popover,
+    body.kelsie-reduce-motion .typing-dot,
+    body.kelsie-reduce-motion #new-conversation.loading svg,
+    body.kelsie-reduce-motion #kelsie-settings-overlay,
+    body.kelsie-reduce-motion .kelsie-settings-card {
+      animation: none !important;
+      transition: none !important;
+    }
+
     .kelsie-profile-primary {
       color: #ffffff !important;
       background: linear-gradient(145deg, #596461, #343d3e) !important;
@@ -2264,7 +2349,7 @@
         right: 9px;
         bottom: 9px;
         width: 315px;
-        height: 305px;
+        height: 505px;
       }
 
       #orb-reminder-popover {
@@ -2280,7 +2365,7 @@
 
       .chat-card {
         width: 305px;
-        height: 305px;
+        height: 465px;
       }
 
       .chat-header {
@@ -2299,6 +2384,7 @@
         min-width: 28px;
         min-height: 28px;
       }
+
 
       #kelsie-settings-overlay {
         place-items: center;
@@ -2509,6 +2595,28 @@
                   stroke="currentColor"
                   stroke-width="1.65"
                   stroke-linecap="round"
+                />
+              </svg>
+            </button>
+
+            <button
+              id="settings-button"
+              class="header-icon-button"
+              type="button"
+              aria-label="Open Kelsie settings"
+              title="Settings"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 15.25A3.25 3.25 0 1 0 12 8.75a3.25 3.25 0 0 0 0 6.5Z"
+                  stroke="currentColor"
+                  stroke-width="1.55"
+                />
+                <path
+                  d="M19.1 13.8a7.6 7.6 0 0 0 0-3.6l2-1.55-2-3.45-2.47 1a7.5 7.5 0 0 0-3.12-1.8L13.16 2h-4l-.35 2.4a7.5 7.5 0 0 0-3.12 1.8l-2.47-1-2 3.45 2 1.55a7.6 7.6 0 0 0 0 3.6l-2 1.55 2 3.45 2.47-1a7.5 7.5 0 0 0 3.12 1.8l.35 2.4h4l.35-2.4a7.5 7.5 0 0 0 3.12-1.8l2.47 1 2-3.45-2-1.55Z"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                  stroke-linejoin="round"
                 />
               </svg>
             </button>
@@ -2795,78 +2903,78 @@
 
       <form id="kelsie-settings-form">
         <div class="settings-section">
-          <span class="settings-section-label">Profile</span>
+          <span class="settings-section-label">How Kelsie knows you</span>
 
           <div class="settings-field">
-            <label for="settings-name">Your name</label>
+            <label for="settings-name">What should Kelsie call you?</label>
             <input
               id="settings-name"
               class="settings-input"
               type="text"
               maxlength="80"
               autocomplete="name"
-              placeholder="What should Kelsie call you?"
+              placeholder="Your name"
             />
-          </div>
-
-          <div class="settings-grid-two">
-            <div class="settings-field">
-              <label for="settings-mode">Main use</label>
-              <select id="settings-mode" class="settings-select">
-                <option value="student">Student</option>
-                <option value="professional">Professional</option>
-                <option value="both">Both</option>
-              </select>
-            </div>
-
-            <div class="settings-field">
-              <label for="settings-proactivity">Proactivity</label>
-              <select id="settings-proactivity" class="settings-select">
-                <option value="low">Low-key</option>
-                <option value="balanced">Balanced</option>
-                <option value="high">More proactive</option>
-              </select>
-            </div>
           </div>
 
           <div class="settings-field">
             <label for="settings-timezone">Timezone</label>
-            <select id="settings-timezone" class="settings-select">
-              <option value="America/Toronto">Eastern — Toronto</option>
-              <option value="America/Halifax">Atlantic — Halifax</option>
-              <option value="America/St_Johns">Newfoundland — St. John’s</option>
-              <option value="America/Winnipeg">Central — Winnipeg</option>
-              <option value="America/Edmonton">Mountain — Edmonton</option>
-              <option value="America/Vancouver">Pacific — Vancouver</option>
-              <option value="UTC">UTC</option>
-            </select>
+            <select id="settings-timezone" class="settings-select"></select>
+            <span class="settings-field-help">
+              Kelsie uses this to understand relative time and schedule reminders correctly.
+            </span>
+          </div>
+
+          <div class="settings-field">
+            <label for="settings-initial-context">Give Kelsie a little context</label>
+            <textarea
+              id="settings-initial-context"
+              class="settings-textarea"
+              maxlength="1800"
+              placeholder="Anything you're working toward, people or projects that matter right now, or preferences that help Kelsie understand you."
+            ></textarea>
+            <span class="settings-field-help">
+              Optional. Kelsie also keeps learning naturally as you talk.
+            </span>
           </div>
         </div>
 
         <div class="settings-section">
-          <span class="settings-section-label">Routine</span>
+          <span class="settings-section-label">How Kelsie behaves</span>
+
+          <div class="settings-field">
+            <label for="settings-proactivity">How involved should Kelsie be?</label>
+            <select id="settings-proactivity" class="settings-select">
+              <option value="low">Only when I ask — mostly stays in the background</option>
+              <option value="balanced">Balanced — surfaces things when genuinely useful</option>
+              <option value="high">More proactive — checks in and follows up more often</option>
+            </select>
+            <span class="settings-field-help">
+              This controls how readily Kelsie takes the initiative; it does not change her core personality.
+            </span>
+          </div>
 
           <div class="settings-toggle-row">
             <div class="settings-toggle-copy">
-              <span class="settings-toggle-title">Daily overview</span>
+              <span class="settings-toggle-title">Use quiet hours</span>
               <span class="settings-toggle-description">
-                Let Kelsie prepare a brief view of your day.
+                Pause Kelsie-initiated check-ins during this window. Reminders you explicitly schedule can still appear when due.
               </span>
             </div>
 
             <label class="settings-switch">
               <input
-                id="settings-daily-overview"
+                id="settings-quiet-enabled"
                 type="checkbox"
-                aria-label="Enable daily overview"
+                aria-label="Enable quiet hours"
               />
               <span class="settings-switch-track"></span>
             </label>
           </div>
 
-          <div class="settings-grid-two">
+          <div class="settings-grid-two" id="settings-quiet-time-grid">
             <div class="settings-field">
-              <label for="settings-quiet-start">Quiet hours start</label>
+              <label for="settings-quiet-start">From</label>
               <input
                 id="settings-quiet-start"
                 class="settings-time"
@@ -2875,13 +2983,91 @@
             </div>
 
             <div class="settings-field">
-              <label for="settings-quiet-end">Quiet hours end</label>
+              <label for="settings-quiet-end">Until</label>
               <input
                 id="settings-quiet-end"
                 class="settings-time"
                 type="time"
               />
             </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <span class="settings-section-label">Accessibility</span>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-copy">
+              <span class="settings-toggle-title">Larger text</span>
+              <span class="settings-toggle-description">Increase text size throughout the Kelsie interface.</span>
+            </div>
+            <label class="settings-switch">
+              <input id="settings-access-large-text" type="checkbox" aria-label="Use larger text" />
+              <span class="settings-switch-track"></span>
+            </label>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-copy">
+              <span class="settings-toggle-title">Higher contrast</span>
+              <span class="settings-toggle-description">Strengthen text, borders and interface contrast.</span>
+            </div>
+            <label class="settings-switch">
+              <input id="settings-access-high-contrast" type="checkbox" aria-label="Use higher contrast" />
+              <span class="settings-switch-track"></span>
+            </label>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-copy">
+              <span class="settings-toggle-title">Reduce motion</span>
+              <span class="settings-toggle-description">Reduce orb, avatar and interface animation.</span>
+            </div>
+            <label class="settings-switch">
+              <input id="settings-access-reduce-motion" type="checkbox" aria-label="Reduce motion" />
+              <span class="settings-switch-track"></span>
+            </label>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-copy">
+              <span class="settings-toggle-title">Simpler responses</span>
+              <span class="settings-toggle-description">Use clearer sentence structure, less jargon and less dense wording without talking down to you.</span>
+            </div>
+            <label class="settings-switch">
+              <input id="settings-access-simple-language" type="checkbox" aria-label="Use simpler responses" />
+              <span class="settings-switch-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <span class="settings-section-label">Memory</span>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-copy">
+              <span class="settings-toggle-title">Long-term memory</span>
+              <span class="settings-toggle-description">
+                Let Kelsie keep durable, useful context across conversations.
+              </span>
+            </div>
+            <label class="settings-switch">
+              <input id="settings-memory-enabled" type="checkbox" aria-label="Enable long-term memory" />
+              <span class="settings-switch-track"></span>
+            </label>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-copy">
+              <span class="settings-toggle-title">Adaptive conversation style</span>
+              <span class="settings-toggle-description">
+                Let Kelsie match your directness, tone and usual response length.
+              </span>
+            </div>
+            <label class="settings-switch">
+              <input id="settings-adaptive-tone" type="checkbox" aria-label="Enable adaptive conversation style" />
+              <span class="settings-switch-track"></span>
+            </label>
           </div>
         </div>
 
@@ -2892,13 +3078,8 @@
         ></div>
 
         <div class="settings-actions">
-          <button id="settings-cancel" type="button">
-            Cancel
-          </button>
-
-          <button id="settings-save" type="submit">
-            Save changes
-          </button>
+          <button id="settings-cancel" type="button">Cancel</button>
+          <button id="settings-save" type="submit">Save changes</button>
         </div>
       </form>
     </section>
@@ -2908,7 +3089,8 @@
     import {
       getOrCreateUserId,
       initProfileUI,
-    } from "./profile.js";
+      populateTimezoneSelect,
+    } from "./profile.js?v=onboarding-intro-v1";
 
     /* =====================================================
        CONFIGURATION
@@ -2953,12 +3135,19 @@
     const settingsPanelClose = document.getElementById("settings-panel-close");
     const settingsForm = document.getElementById("kelsie-settings-form");
     const settingsName = document.getElementById("settings-name");
-    const settingsMode = document.getElementById("settings-mode");
-    const settingsProactivity = document.getElementById("settings-proactivity");
     const settingsTimezone = document.getElementById("settings-timezone");
-    const settingsDailyOverview = document.getElementById("settings-daily-overview");
+    const settingsInitialContext = document.getElementById("settings-initial-context");
+    const settingsProactivity = document.getElementById("settings-proactivity");
+    const settingsQuietEnabled = document.getElementById("settings-quiet-enabled");
+    const settingsQuietTimeGrid = document.getElementById("settings-quiet-time-grid");
     const settingsQuietStart = document.getElementById("settings-quiet-start");
     const settingsQuietEnd = document.getElementById("settings-quiet-end");
+    const settingsAccessLargeText = document.getElementById("settings-access-large-text");
+    const settingsAccessHighContrast = document.getElementById("settings-access-high-contrast");
+    const settingsAccessReduceMotion = document.getElementById("settings-access-reduce-motion");
+    const settingsAccessSimpleLanguage = document.getElementById("settings-access-simple-language");
+    const settingsMemoryEnabled = document.getElementById("settings-memory-enabled");
+    const settingsAdaptiveTone = document.getElementById("settings-adaptive-tone");
     const settingsSaveStatus = document.getElementById("settings-save-status");
     const settingsCancel = document.getElementById("settings-cancel");
     const settingsSave = document.getElementById("settings-save");
@@ -2966,6 +3155,7 @@
     const reminderButton = document.getElementById("reminder-button");
     const reminderCountBadge = document.getElementById("reminder-count-badge");
     const newConversationButton = document.getElementById("new-conversation");
+    const settingsButton = document.getElementById("settings-button");
     const closeButton = document.getElementById("close-widget");
     const messageList = document.getElementById("message-list");
     const typingRow = document.getElementById("typing-row");
@@ -3020,7 +3210,6 @@
     let reminderRefreshBusy = false;
     let reminderPollTimer = null;
     let hasUnreadChat = false;
-    let loaded = true;
     let awaitingResponse = false;
     let creatingNewConversation = false;
     let switchingConversation = false;
@@ -3058,11 +3247,13 @@
         }
 
         if (
+          button.closest("#kelsie-onboarding") ||
           [
             "kelsie-orb",
             "history-button",
             "reminder-button",
             "new-conversation",
+            "settings-button",
             "close-widget",
             "send-message",
           ].includes(button.id)
@@ -3108,30 +3299,6 @@
       childList: true,
       subtree: true,
     });
-
-    /* =====================================================
-       AMBIENT VISUAL STATE
-
-       The 3D stick figure has been intentionally removed. These
-       no-op helpers preserve the existing chat flow without loading
-       Three.js, a GLB model, or a canvas renderer.
-    ===================================================== */
-
-    let mixer = null;
-    let activeAction = null;
-    let activeGesture = null;
-
-    function playIdle() {
-      return false;
-    }
-
-    function wave() {
-      return false;
-    }
-
-    function think() {
-      return false;
-    }
 
     /* =====================================================
        CONNECTION STATUS
@@ -3283,7 +3450,6 @@
         }
 
         if (isOpen) {
-          wave();
           scheduleCollapse();
         } else {
           showUnreadBadge(true);
@@ -4541,13 +4707,6 @@
       showUnreadBadge(false);
       renderDueReminder();
 
-      if (loaded) {
-        playIdle();
-
-        if (waveOnOpen) {
-          window.setTimeout(() => wave(), 260);
-        }
-      }
 
       if (
         focusInput &&
@@ -4571,12 +4730,6 @@
       clearInactivityTimer();
       chatInput.blur();
 
-      if (mixer) {
-        mixer.stopAllAction();
-      }
-
-      activeAction = null;
-      activeGesture = null;
     }
 
     /* =====================================================
@@ -4627,7 +4780,6 @@
       awaitingResponse = true;
       updateSendButton();
       showTyping(true);
-      think();
 
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(cleanText);
@@ -4698,7 +4850,6 @@
       updateSendButton();
 
       if (isOpen) {
-        wave();
         scheduleCollapse();
       } else {
         showUnreadBadge(true);
@@ -4780,27 +4931,47 @@
 
 
     /* =====================================================
-       SETTINGS
+       SETTINGS + ACCESSIBILITY
     ===================================================== */
 
-    function ensureTimezoneOption(timezone) {
-      const value = String(timezone || "").trim();
+    const DEVICE_REDUCES_MOTION =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      if (!value) {
-        return;
-      }
+    let accessibilityReduceMotion = DEVICE_REDUCES_MOTION;
 
-      const existing = Array.from(settingsTimezone.options)
-        .some((option) => option.value === value);
+    function applyAccessibilityPreferences(profile) {
+      const current = profile ?? {};
 
-      if (existing) {
-        return;
-      }
+      document.body.classList.toggle(
+        "kelsie-large-text",
+        current.accessibility_large_text === true
+      );
 
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = value;
-      settingsTimezone.appendChild(option);
+      document.body.classList.toggle(
+        "kelsie-high-contrast",
+        current.accessibility_high_contrast === true
+      );
+
+      accessibilityReduceMotion =
+        DEVICE_REDUCES_MOTION ||
+        current.accessibility_reduce_motion === true;
+
+      document.body.classList.toggle(
+        "kelsie-reduce-motion",
+        accessibilityReduceMotion
+      );
+    }
+
+    function updateSettingsQuietState() {
+      const enabled = settingsQuietEnabled.checked;
+
+      settingsQuietTimeGrid.style.opacity = enabled
+        ? "1"
+        : "0.48";
+
+      settingsQuietStart.disabled = !enabled;
+      settingsQuietEnd.disabled = !enabled;
     }
 
     function populateSettingsForm() {
@@ -4808,17 +4979,22 @@
 
       settingsName.value = String(profile.name ?? "");
 
-      const mode = String(profile.mode ?? "both");
-      settingsMode.value = [
-        "student",
-        "professional",
-        "both",
-      ].includes(mode)
-        ? mode
-        : "both";
+      const timezone = String(
+        profile.timezone ??
+        Intl.DateTimeFormat().resolvedOptions().timeZone ??
+        "America/Toronto"
+      );
+
+      populateTimezoneSelect(settingsTimezone, timezone);
+
+      settingsInitialContext.value = String(
+        profile.initial_context ?? ""
+      );
 
       const proactivity = String(
-        profile.proactivity ?? "balanced"
+        profile.proactivity_level ??
+        profile.proactivity ??
+        "balanced"
       );
 
       settingsProactivity.value = [
@@ -4829,26 +5005,53 @@
         ? proactivity
         : "balanced";
 
-      const timezone = String(
-        profile.timezone ?? "America/Toronto"
-      );
-
-      ensureTimezoneOption(timezone);
-      settingsTimezone.value = timezone;
-
-      settingsDailyOverview.checked =
-        profile.daily_overview_enabled !== false;
+      settingsQuietEnabled.checked =
+        profile.quiet_hours_enabled !== false;
 
       settingsQuietStart.value = String(
-        profile.quiet_hours_start ?? ""
+        profile.quiet_hours_start ?? "23:00"
       );
 
       settingsQuietEnd.value = String(
-        profile.quiet_hours_end ?? ""
+        profile.quiet_hours_end ?? "08:00"
       );
+
+      settingsAccessLargeText.checked =
+        profile.accessibility_large_text === true;
+
+      settingsAccessHighContrast.checked =
+        profile.accessibility_high_contrast === true;
+
+      settingsAccessReduceMotion.checked =
+        DEVICE_REDUCES_MOTION ||
+        profile.accessibility_reduce_motion === true;
+
+      settingsAccessReduceMotion.disabled =
+        DEVICE_REDUCES_MOTION;
+
+      settingsAccessSimpleLanguage.checked =
+        profile.accessibility_simplified_language === true;
+
+      settingsMemoryEnabled.checked =
+        profile.memory_enabled !== false;
+
+      settingsAdaptiveTone.checked =
+        profile.adaptive_tone !== false;
 
       settingsSaveStatus.textContent = "";
       settingsSaveStatus.classList.remove("error");
+
+      updateSettingsQuietState();
+
+      const involvementCopy = {
+        low: "Kelsie will mostly wait for you to start.",
+        balanced: "Kelsie can make a restrained connection when it is clearly useful.",
+        high: "Kelsie can take one small, relevant initiative more often.",
+      };
+
+      settingsProactivity.title =
+        involvementCopy[settingsProactivity.value] ??
+        involvementCopy.balanced;
     }
 
     function openSettingsPanel() {
@@ -4887,6 +5090,33 @@
         : "Save changes";
     }
 
+    async function seedSettingsContext(text) {
+      const cleaned = String(text || "").trim();
+
+      if (!cleaned) {
+        return;
+      }
+
+      try {
+        await requestJson(
+          `${API_BASE_URL}/api/memory/` +
+          `${encodeURIComponent(USER_ID)}/seed`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: cleaned }),
+          }
+        );
+      } catch (error) {
+        console.warn(
+          "Profile settings saved, but memory seeding was skipped:",
+          error
+        );
+      }
+    }
+
     async function saveSettings() {
       if (settingsSaving) {
         return;
@@ -4906,16 +5136,41 @@
       settingsSaveStatus.textContent = "Saving your settings…";
       settingsSaveStatus.classList.remove("error");
 
+      const previousContext = String(
+        USER_PROFILE?.initial_context ?? ""
+      ).trim();
+
+      const newContext = settingsInitialContext.value.trim();
+
       const payload = {
         user_id: USER_ID,
         id: USER_ID,
         name,
-        mode: settingsMode.value,
+        mode: USER_PROFILE?.mode ?? "both",
         timezone: settingsTimezone.value,
-        daily_overview_enabled: settingsDailyOverview.checked,
-        quiet_hours_start: settingsQuietStart.value || null,
-        quiet_hours_end: settingsQuietEnd.value || null,
         proactivity: settingsProactivity.value,
+        proactivity_level: settingsProactivity.value,
+        initial_context: newContext,
+        quiet_hours_enabled: settingsQuietEnabled.checked,
+        quiet_hours_start: settingsQuietEnabled.checked
+          ? settingsQuietStart.value || "23:00"
+          : null,
+        quiet_hours_end: settingsQuietEnabled.checked
+          ? settingsQuietEnd.value || "08:00"
+          : null,
+        accessibility_large_text:
+          settingsAccessLargeText.checked,
+        accessibility_high_contrast:
+          settingsAccessHighContrast.checked,
+        accessibility_reduce_motion:
+          DEVICE_REDUCES_MOTION ||
+          settingsAccessReduceMotion.checked,
+        accessibility_simplified_language:
+          settingsAccessSimpleLanguage.checked,
+        memory_enabled: settingsMemoryEnabled.checked,
+        adaptive_tone: settingsAdaptiveTone.checked,
+        daily_overview_enabled:
+          USER_PROFILE?.daily_overview_enabled !== false,
       };
 
       try {
@@ -4932,6 +5187,16 @@
         );
 
         USER_PROFILE = savedProfile ?? payload;
+        applyAccessibilityPreferences(USER_PROFILE);
+
+        if (
+          settingsMemoryEnabled.checked &&
+          newContext &&
+          newContext !== previousContext
+        ) {
+          await seedSettingsContext(newContext);
+        }
+
         settingsSaveStatus.textContent = "Settings saved.";
 
         window.dispatchEvent(
@@ -4944,7 +5209,7 @@
           settingsSaving = false;
           updateSettingsSavingState();
           closeSettingsPanel();
-        }, 550);
+        }, 450);
 
       } catch (error) {
         console.error("Could not save Kelsie settings:", error);
@@ -4956,51 +5221,27 @@
       }
     }
 
-    function isExternalSettingsControl(button) {
-      if (!(button instanceof HTMLElement)) {
-        return false;
-      }
-
-      if (button.closest("#kelsie-settings-overlay")) {
-        return false;
-      }
-
-      const descriptor = [
-        button.id,
-        button.className,
-        button.getAttribute("aria-label"),
-        button.getAttribute("title"),
-        button.textContent,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .replace(/\s+/g, " ")
-        .trim()
-        .toLowerCase();
-
-      return (
-        descriptor.includes("settings") ||
-        descriptor.includes("preferences")
-      );
-    }
-
-    document.addEventListener(
+    settingsButton.addEventListener(
       "click",
-      (event) => {
-        const button = event.target.closest(
-          "button, [role='button']"
-        );
-
-        if (!isExternalSettingsControl(button)) {
-          return;
-        }
-
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        openSettingsPanel();
-      },
-      true
+      openSettingsPanel
     );
+
+    settingsQuietEnabled.addEventListener(
+      "change",
+      updateSettingsQuietState
+    );
+
+    settingsProactivity.addEventListener("change", () => {
+      const involvementCopy = {
+        low: "Kelsie will mostly wait for you to start.",
+        balanced: "Kelsie can make a restrained connection when it is clearly useful.",
+        high: "Kelsie can take one small, relevant initiative more often.",
+      };
+
+      settingsProactivity.title =
+        involvementCopy[settingsProactivity.value] ??
+        involvementCopy.balanced;
+    });
 
     settingsForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -5035,6 +5276,7 @@
 
     async function handleProfileReady(profile) {
       USER_PROFILE = profile;
+      applyAccessibilityPreferences(profile);
       polishProfileButtons(document);
 
       try {
@@ -5131,6 +5373,7 @@
     });
 
 
+
     panel.addEventListener("pointerdown", registerActivity);
 
     document.addEventListener("click", (event) => {
@@ -5167,9 +5410,6 @@
           openWidget();
         }
       },
-
-      wave,
-      think,
 
       say(text) {
         receiveAssistantMessage(String(text));
@@ -5218,9 +5458,6 @@
         return activeConversationId;
       },
 
-      get loaded() {
-        return loaded;
-      },
 
       get isOpen() {
         return isOpen;
@@ -5264,6 +5501,7 @@
 
       await refreshReminderState({ silent: true });
       startReminderPolling();
+
     }
 
     initializeKelsie().catch((error) => {

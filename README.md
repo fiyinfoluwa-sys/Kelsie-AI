@@ -1,8 +1,8 @@
-# Kelsie AI
+# Kelsie AI 🤖
 
 Kelsie is an ambient personal AI assistant designed to help you think, understand, communicate, and keep track of things without requiring you to constantly switch into a separate AI app.
 
-Rather than always jumping straight to an answer, Kelsie can help users work through information themselves — while still allowing them to ask for direct help when they want it.
+Rather than always jumping straight to an answer, Kelsie can help users work through information themselves, while still allowing them to ask for direct help when they want it.
 
 > **AI that can help you think, not just finish.**
 

@@ -6,6 +6,14 @@ The idea is as simple as you mentioning something; Kelsie understands why it mat
 
 ---
 
+## Product Strategy
+
+Alongside development, I documented the product thinking behind Kelsie — including the target user, product vision, key problems, feature priorities, and roadmap.
+
+Read the Product Vision and Roadmap [here] (https://docs.google.com/document/d/e/2PACX-1vSaO2HSkUQAklphYTHMOJna_qnlpBRKiS-wfG4oDw2w5FTvGa0aznEvuul7MIxVnpyZ90mJCcFFzoOZ/pub) 
+
+---
+
 ## What Kelsie does
 
 Kelsie currently runs as a Chrome extension and acts as an AI layer across the browser.

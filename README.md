@@ -18,11 +18,10 @@ Read the Product Vision and Roadmap [here](https://docs.google.com/document/d/e/
 
 Kelsie currently runs as a Chrome extension and acts as an AI layer across your browser. While browsing, you can tell Kelsie some things naturally, such as:
 
-"I want to come back to this."
-"I need this for my assignment."
-"I want to compare this before I decide."
-"I should email someone about this."
-"This would be useful for my presentation."
+- "I want to come back to this."
+- "This would be useful for my presentation."
+- "I want to compare this before I decide."
+- "I should email someone about this."
 
 Instead of making you organize everything into folders, notes, or reminders, Kelsie remembers the useful context: what you saw, why it mattered, and where it came from.
 

@@ -1,79 +1,49 @@
 # Kelsie AI 🤖
 
-Kelsie is an ambient AI assistant designed to help you keep track of the things that matter without having to constantly organize, save, or re-explain them.
+Kelsie is an ambient AI assistant designed to help you keep track of the things that matter without constantly organizing, saving, or re-explaining them.
 
-The idea is as simple as you mentioning something; Kelsie understands why it matters and brings it back when it becomes useful later.
+The idea is simple: you mention something to Kelsie, she remembers why it mattered, and brings it back when it becomes useful.
 
 ---
 
 ## Product Strategy
 
-Alongside development, I documented the product thinking behind Kelsie — including the target user, product vision, key problems, feature priorities, and roadmap.
+Alongside development, I documented the product thinking behind Kelsie, including the target user, product vision, key problems, feature priorities, and roadmap.
 
-Read the Product Vision and Roadmap [here] (https://docs.google.com/document/d/e/2PACX-1vSaO2HSkUQAklphYTHMOJna_qnlpBRKiS-wfG4oDw2w5FTvGa0aznEvuul7MIxVnpyZ90mJCcFFzoOZ/pub) 
+Read the Product Vision and Roadmap [here](https://docs.google.com/document/d/e/2PACX-1vSaO2HSkUQAklphYTHMOJna_qnlpBRKiS-wfG4oDw2w5FTvGa0aznEvuul7MIxVnpyZ90mJCcFFzoOZ/pub) 
 
 ---
 
 ## What Kelsie does
 
-Kelsie currently runs as a Chrome extension and acts as an AI layer across the browser.
+Kelsie currently runs as a Chrome extension and acts as an AI layer across your browser. While browsing, you can tell Kelsie some things naturally, such as:
 
-While browsing, you can tell Kelsie things naturally:
+"I want to come back to this."
+"I need this for my assignment."
+"I want to compare this before I decide."
+"I should email someone about this."
+"This would be useful for my presentation."
 
-- "I want to come back to this."
-- "I need this for my assignment."
-- "I want to compare this before I decide."
-- "I should email someone about this."
-- "This would be useful for my presentation."
-
-Instead of requiring you to manually organize everything into folders, notes, or reminders, Kelsie keeps the relevant context — including what it is, why it mattered, and where it came from.
+Instead of making you organize everything into folders, notes, or reminders, Kelsie remembers the useful context: what you saw, why it mattered, and where it came from.
 
 ---
 
 ### Contextual resurfacing
 
-Kelsie can bring something back when your current browser context makes it useful.
-
-For example:
-
-You might tell Kelsie:
-
+Kelsie can bring something back when it becomes relevant again. For example, you might say:
 > "I want to apply to this PM role, but I need to update my resume first."
 
-Later, while working on your resume, Kelsie can surface the role again.
-
-The goal is not to interrupt you whenever two pages look similar. Kelsie is designed to stay quiet unless the previous context is meaningfully useful in the moment.
+Later, when you are working on your resume, Kelsie can surface that role again. The goal is not to constantly interrupt you. Kelsie should only step in when something you previously mentioned is actually useful.
 
 ---
 
 ### Context-aware reading
 
-Kelsie can also help while you are reading online.
+Kelsie can also help you understand what you are reading without leaving the page. Its current actions include:
 
-It currently supports:
-
-- **Help me understand it** — breaks down how the page is structured and works through it with you.
-- **Summarize it** — gives you a direct summary.
-- **I have questions about this page** — lets you discuss the current page in your normal Kelsie conversation.
+- **Help me understand it** — breaks down the page and works through it with you.
+- **Summarize it** — gives you a direct summary of the page.
+- **I have questions about this page** — lets you ask questions using the current page as context.
 - **Keep this in mind** — saves why the page matters so it can be useful later.
 
-Kelsie can adapt to different types of content, including articles, research, tutorials, explainers, news, and reference material.
-
-Page context is temporary unless you explicitly ask Kelsie to keep something.
-
----
-
-## How Kelsie works
-
-At the centre of Kelsie is a simple loop:
-
-```text
-Notice
-  ↓
-Understand
-  ↓
-Remember
-  ↓
-Match
-  ↓
-Surface
+Kelsie works across content such as articles, research, tutorials, explainers, news, and reference material. By default, page context is temporary. Kelsie only keeps it for later when you explicitly ask her to.

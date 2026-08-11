@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kelsie",
-  "version": "0.4.0",
+  "version": "0.5.1",
   "description": "Kelsie, your ambient personal AI assistant.",
   "permissions": ["storage"],
   "host_permissions": [
@@ -20,7 +20,9 @@
       ],
       "js": [
         "content.js",
-        "reading-assist.js"
+        "stable-identity.js",
+        "reading-assist.js",
+        "context-assist.js"
       ],
       "run_at": "document_idle"
     },
@@ -29,7 +31,11 @@
         "http://127.0.0.1/*",
         "http://localhost/*"
       ],
-      "js": ["page-context-hook.js"],
+      "js": [
+        "stable-identity-hook.js",
+        "page-context-hook.js",
+        "keeping-in-mind-hook.js"
+      ],
       "run_at": "document_start",
       "all_frames": true,
       "world": "MAIN"

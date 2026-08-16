@@ -8,7 +8,7 @@ The idea is simple: you mention something to Kelsie, she remembers why it matter
 
 ## Product Strategy
 
-Alongside development, I documented the product thinking behind Kelsie, including the target user, product vision, key problems, feature priorities, and roadmap.
+Alongside development, I documented the product thinking behind Kelsie, including the target user, product vision, key problems, etc.
 
 Read the Product Vision and Roadmap [here](https://docs.google.com/document/d/e/2PACX-1vSaO2HSkUQAklphYTHMOJna_qnlpBRKiS-wfG4oDw2w5FTvGa0aznEvuul7MIxVnpyZ90mJCcFFzoOZ/pub) 
 

@@ -8,7 +8,8 @@ The Kelsie profile site, built with Next.js (App Router) and Supabase Auth.
 - `/signup`, `/signin` — email + password or Google
 - `/forgot-password`, `/reset-password` — password reset by email
 - `/onboarding` — five setup steps (signed-in, verified users only)
-- `/profile` — your answers, sign out, delete account (signed-in users only)
+- `/profile` — home: memory timeline, deadlines, applications, sites (signed-in users only)
+- `/settings` — edit answers, memory and privacy, account, delete account (signed-in users only)
 
 ## Run it locally
 
@@ -36,7 +37,8 @@ Open <http://localhost:3000>.
 ### 1. Supabase project
 
 1. Create a project at <https://supabase.com/dashboard> (Free plan). Save the database password in a password manager.
-2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql).
+2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same, in order, with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql) and [`0003_memories_deadlines_applications.sql`](supabase/migrations/0003_memories_deadlines_applications.sql).
+   - Optional, for your own test account only: [`supabase/seed/sample_data.sql`](supabase/seed/sample_data.sql) adds sample memories, deadlines and applications. Replace `YOUR_EMAIL_HERE` in the SQL Editor before running it, and don't commit your email.
 3. **Authentication → Sign In / Providers → Email**: keep **Confirm email** on and set **Minimum password length** to `8`.
 4. **Authentication → URL Configuration**:
    - Site URL: `https://kelsie-ai-beta.vercel.app`

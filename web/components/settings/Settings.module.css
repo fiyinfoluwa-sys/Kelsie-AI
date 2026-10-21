@@ -1,0 +1,226 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+  padding-top: 36px;
+  padding-bottom: 72px;
+}
+
+.title {
+  font-size: clamp(36px, 6vw, 48px);
+  font-weight: 800;
+}
+
+.subtitle {
+  margin-top: -12px;
+  color: var(--ink-muted);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.card h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+.status {
+  min-height: 1.4em;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.statusError {
+  color: #a3261f;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.label {
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px;
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  background: var(--surface);
+  font-size: 16px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--violet);
+  box-shadow: 0 0 0 4px rgba(107, 78, 255, 0.15);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--card-border);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pill:hover {
+  box-shadow: inset 0 0 0 1.5px var(--violet);
+}
+
+.pill[aria-pressed="true"] {
+  background: var(--violet);
+  box-shadow: none;
+  color: #fff;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+}
+
+.sectionHead + .row {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.rowTitle {
+  font-weight: 600;
+}
+
+.muted {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.note {
+  min-height: 0;
+  font-size: 14px;
+  color: var(--violet);
+}
+
+.note:empty {
+  display: none;
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dangerButton {
+  background: #c8322a;
+  color: #fff;
+}
+
+.dangerButton:hover {
+  background: #a9271f;
+}
+
+/* Switch */
+
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: #d4d1dc;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.switch[aria-checked="true"] {
+  background: var(--violet);
+}
+
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(23, 22, 28, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.switch[aria-checked="true"] .knob {
+  transform: translateX(22px);
+}
+
+/* Danger zone */
+
+.danger {
+  border: 1.5px solid #e8a9a4;
+}
+
+.danger h2 {
+  color: #a3261f;
+}
+
+@media (max-width: 560px) {
+  .card {
+    padding: 20px 18px;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

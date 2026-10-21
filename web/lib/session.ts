@@ -27,7 +27,9 @@ export async function getProfile(supabase: Supabase, userId: string): Promise<Pr
   // filter just makes the intent explicit.
   const { data, error } = await supabase
     .from("profiles")
-    .select("name, roles, timezone, vibe, allowed_sites, onboarding_completed_at")
+    .select(
+      "name, roles, timezone, vibe, allowed_sites, onboarding_completed_at, memory_enabled, extension_connected_at",
+    )
     .eq("id", userId)
     .maybeSingle();
   if (error) {

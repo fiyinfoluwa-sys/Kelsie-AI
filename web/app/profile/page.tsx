@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import DeleteAccount from "@/components/DeleteAccount";
-import Logo from "@/components/Logo";
-import Orb from "@/components/Orb";
-import SpeechBubble from "@/components/SpeechBubble";
-import { signOut } from "@/app/auth/actions";
-import { ROLES, SITES, VIBES, displayName, rowToAnswers, vibeFarewell } from "@/lib/onboarding";
+import AppNav from "@/components/AppNav";
+import ApplicationsTable from "@/components/dashboard/ApplicationsTable";
+import ComingUp from "@/components/dashboard/ComingUp";
+import MemoryTimeline from "@/components/dashboard/MemoryTimeline";
+import OrbHero from "@/components/dashboard/OrbHero";
+import RidingAlong from "@/components/dashboard/RidingAlong";
+import styles from "@/components/dashboard/Dashboard.module.css";
+import { SOURCE_LABELS, greeting, showsApplications } from "@/lib/content";
+import { loadDashboard } from "@/lib/dashboard";
+import { daysBetween, dateTile, localHour, longDate, relativeDay, shortDate } from "@/lib/dates";
+import { displayName, rowToAnswers, sitesToList } from "@/lib/onboarding";
 import { getProfile, requireUser } from "@/lib/session";
-import { formatTimezone } from "@/lib/timezones";
-import styles from "@/components/Profile.module.css";
 
 export const metadata: Metadata = {
-  title: "Your profile — Kelsie",
+  title: "Home — Kelsie",
 };
 
 export default async function ProfilePage() {
@@ -22,66 +24,67 @@ export default async function ProfilePage() {
 
   const answers = rowToAnswers(profile);
   const name = displayName(answers);
-  const rows = [
-    { label: "Name", value: name },
-    {
-      label: "Up to",
-      value: ROLES.filter((r) => answers.roles.includes(r.id)).map((r) => r.label).join(", "),
-    },
-    { label: "Timezone", value: formatTimezone(answers.timezone) },
-    { label: "Vibe", value: VIBES.find((v) => v.id === answers.vibe)?.label ?? "Not set" },
-    {
-      label: "Sites",
-      value: SITES.filter((s) => answers.sites[s.id]).map((s) => s.label).join(", ") || "None yet",
-    },
-  ];
+  const tz = answers.timezone;
+  const data = await loadDashboard(supabase, user.id, tz);
+  const sites = sitesToList(answers.sites);
+  const withApplications = showsApplications(answers.roles, data.applications.length);
+  const hello = greeting(answers.vibe, name, localHour(tz), data.upcoming.length);
 
   return (
-    <div className={styles.page}>
-      <header className={`container ${styles.header}`}>
-        <Logo />
-        <form action={signOut}>
-          <button type="submit" className="btn btn-secondary btn-sm">
-            Sign out
-          </button>
-        </form>
-      </header>
+    <>
+      <AppNav active="home" name={name} showApplications={withApplications} />
+      <main className={`container ${styles.page}`}>
+        <div className={styles.top}>
+          <MemoryTimeline
+            memoryEnabled={profile.memory_enabled}
+            items={data.memories.map((m) => ({
+              id: m.id,
+              content: m.content,
+              meta: `${SOURCE_LABELS[m.source] ?? "Kelsie"} · ${relativeDay(m.created_at, tz)}`,
+            }))}
+          />
+          <OrbHero
+            connected={Boolean(profile.extension_connected_at)}
+            siteCount={sites.length}
+            date={longDate(tz)}
+            title={hello.title}
+            line={hello.line}
+          />
+          <ComingUp
+            upcoming={data.upcoming.map((d) => {
+              const days = daysBetween(data.today, d.due_date);
+              return {
+                id: d.id,
+                title: d.title,
+                details: d.details,
+                ...dateTile(d.due_date),
+                tag: days === 0 ? "Today" : days === 1 ? "Tomorrow" : null,
+              };
+            })}
+            suggested={data.suggested.map((d) => ({
+              id: d.id,
+              title: d.title,
+              details: d.details,
+              when: `Due ${shortDate(d.due_date)}`,
+            }))}
+          />
+        </div>
 
-      <main className={`container ${styles.main}`}>
-        <section className={styles.hello}>
-          <Orb size={96} />
-          <div>
-            <h1 className={styles.title}>Hey, {name}.</h1>
-            <SpeechBubble className={styles.bubble}>{vibeFarewell(answers.vibe, name)}</SpeechBubble>
-          </div>
-        </section>
-
-        <section className={styles.card} aria-labelledby="setup-title">
-          <div className={styles.cardHead}>
-            <h2 id="setup-title">Your setup</h2>
-            <Link href="/onboarding" className={styles.edit}>
-              Edit
-            </Link>
-          </div>
-          <dl className={styles.rows}>
-            {rows.map((row) => (
-              <div key={row.label} className={styles.row}>
-                <dt>{row.label}</dt>
-                <dd>{row.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className={styles.account}>Signed in as {user.email}</p>
-        </section>
-
-        <section className={`${styles.card} ${styles.dangerZone}`} aria-labelledby="danger-title">
-          <h2 id="danger-title">Delete account</h2>
-          <p className={styles.muted}>
-            Removes your account and all of your Kelsie data for good.
-          </p>
-          <DeleteAccount />
-        </section>
+        <div className={styles.below}>
+          {withApplications && (
+            <ApplicationsTable
+              rows={data.applications.map((a) => ({
+                id: a.id,
+                company: a.company,
+                role: a.role,
+                status: a.status,
+                applied: a.applied_on ? shortDate(a.applied_on) : "—",
+              }))}
+            />
+          )}
+          <RidingAlong sites={sites} />
+        </div>
       </main>
-    </div>
+    </>
   );
 }

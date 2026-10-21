@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kelsie</title>
+    <link rel="stylesheet" href="popup.css" />
+    <script type="module" src="popup.js"></script>
+  </head>
+  <body>
+    <main id="app" aria-live="polite">
+      <header class="brand">
+        <span class="orb" aria-hidden="true"></span>
+        <span class="wordmark">Kelsie</span>
+      </header>
+
+      <section id="loading" class="view">
+        <p class="muted">Checking your account…</p>
+      </section>
+
+      <section id="disconnected" class="view" hidden>
+        <h1>Let&rsquo;s get you connected.</h1>
+        <p class="muted">
+          Link this browser to your Kelsie account. Kelsie only runs on the sites you pick.
+        </p>
+        <button id="connect" class="btn primary" type="button">Connect to Kelsie</button>
+        <p id="connect-note" class="note" hidden>
+          Finish on the Kelsie tab that just opened.
+        </p>
+      </section>
+
+      <section id="connected" class="view" hidden>
+        <div class="account">
+          <p class="name" id="name"></p>
+          <p class="vibe" id="vibe"></p>
+        </div>
+
+        <p class="status"><span class="dot" id="status-dot"></span><span id="status"></span></p>
+
+        <div id="permission" class="permission" hidden>
+          <p id="permission-text"></p>
+          <button id="allow" class="btn primary" type="button">Allow</button>
+        </div>
+
+        <button id="pause" class="btn secondary" type="button"></button>
+        <button id="profile" class="btn secondary" type="button">Open my profile</button>
+        <button id="unhide" class="link" type="button" hidden></button>
+        <button id="disconnect" class="link danger" type="button">Disconnect</button>
+      </section>
+
+      <p id="error" class="error" role="alert" hidden></p>
+    </main>
+  </body>
+</html>

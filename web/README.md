@@ -37,7 +37,7 @@ Open <http://localhost:3000>.
 ### 1. Supabase project
 
 1. Create a project at <https://supabase.com/dashboard> (Free plan). Save the database password in a password manager.
-2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same, in order, with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql) and [`0003_memories_deadlines_applications.sql`](supabase/migrations/0003_memories_deadlines_applications.sql).
+2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same, in order, with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql), [`0003_memories_deadlines_applications.sql`](supabase/migrations/0003_memories_deadlines_applications.sql) and [`0004_extension_sessions.sql`](supabase/migrations/0004_extension_sessions.sql).
    - Optional, for your own test account only: [`supabase/seed/sample_data.sql`](supabase/seed/sample_data.sql) adds sample memories, deadlines and applications. Replace `YOUR_EMAIL_HERE` in the SQL Editor before running it, and don't commit your email.
 3. **Authentication → Sign In / Providers → Email**: keep **Confirm email** on and set **Minimum password length** to `8`.
 4. **Authentication → URL Configuration**:
@@ -81,6 +81,10 @@ Open <http://localhost:3000>.
 ### Before inviting real users
 
 Supabase's built-in email service is meant for testing: it sends very few emails per hour and may only deliver to your project's team members. Set up custom SMTP (for example Resend's free plan) under **Authentication → Emails → SMTP Settings**.
+
+## Chrome extension
+
+The extension lives in [`../chrome-extension`](../chrome-extension). It connects through `/connect-extension` and calls `/api/extension/*`; see its README.
 
 ## Deploy
 

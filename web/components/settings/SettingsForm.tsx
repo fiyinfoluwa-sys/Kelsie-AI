@@ -18,6 +18,7 @@ import {
   type SiteId,
   type Vibe,
 } from "@/lib/onboarding";
+import { notifyExtension } from "@/lib/extension";
 import { formatTimezone, timezoneGroups } from "@/lib/timezones";
 import onboarding from "@/components/Onboarding.module.css";
 import styles from "./Settings.module.css";
@@ -72,6 +73,8 @@ export default function SettingsForm({
     const result = await updateSettings(changes);
     window.clearTimeout(savedTimers.current[section]);
     if (result.ok) {
+      // Sites, name, vibe and pause all show in the extension: re-sync it.
+      notifyExtension();
       setStatus((s) => ({ ...s, [section]: { state: "saved" } }));
       savedTimers.current[section] = window.setTimeout(
         () => setStatus((s) => ({ ...s, [section]: { state: "idle" } })),

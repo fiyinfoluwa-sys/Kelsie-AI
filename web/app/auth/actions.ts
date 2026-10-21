@@ -124,6 +124,8 @@ export async function updatePassword(_prev: AuthFormState, form: FormData): Prom
 
 export async function signOut(): Promise<void> {
   const supabase = await createClient();
+  // Disconnect every Chrome extension linked to this account first.
+  await supabase.rpc("revoke_my_extension_sessions");
   // Revokes the refresh token on Supabase's side and clears the cookies.
   await supabase.auth.signOut();
   redirect("/");

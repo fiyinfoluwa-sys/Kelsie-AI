@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { setSiteAllowed } from "@/app/profile/actions";
 import { SITE_DESCRIPTIONS } from "@/lib/content";
+import { notifyExtension } from "@/lib/extension";
 import { SITES, type SiteId } from "@/lib/onboarding";
 import styles from "./Dashboard.module.css";
 
@@ -27,6 +28,8 @@ export default function RidingAlong({ sites: initialSites }: { sites: SiteId[] }
       }
       setError(null);
       setSites(result.sites);
+      // Tell the extension to stop (or start) running there right away.
+      notifyExtension();
       window.clearTimeout(timer.current);
       if (allowed) {
         setRemoved(null);

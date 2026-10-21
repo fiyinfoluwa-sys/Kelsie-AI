@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Kelsie",
+  "version": "1.0.0",
+  "description": "Your ambient AI sidekick. Runs only on the sites you choose.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGB1YlSpDN2M3ScBKWinT8fkDXwMm1VDZjKns2C6rzazPOQIuioovZk/UCAtdfVZtXEBEm30AZgdervoIZmhi4+v84GeqmH3UnB4YjVtG63/XzxFCu1p8UqfUPgR+iptqj3BOzI5FQMJkQ4PxPTDELwBaX+qZZQQLxCGXFbno4iM/1ykWUJ7wJVoIZJu/inHyWl//NJmXMjw8lVScM8IwZlZWb6XKfKRrrn0rhr8s5bmC/Lu0KiVfnGQyTpLFHvJffQAjwEu16wTx/TB254DGahmxgK3I51+N89+1cWZ4PZQrYSu635U9GqUBaU7UIGRazwQk9osQBeNpybmyNqZnQIDAQAB",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Kelsie",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "scripting",
+    "alarms"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "externally_connectable": {
+    "matches": [
+      "https://kelsie-ai-beta.vercel.app/*",
+      "http://localhost:3000/*"
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src https://kelsie-ai-beta.vercel.app http://localhost:3000; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+  }
+}

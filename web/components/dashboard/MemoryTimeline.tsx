@@ -5,6 +5,7 @@ import { deleteMemory, updateMemory } from "@/app/profile/actions";
 import { updateSettings } from "@/app/settings/actions";
 import { PencilIcon, TrashIcon } from "@/components/icons";
 import { MEMORY_MAX_LENGTH } from "@/lib/content";
+import { notifyExtension } from "@/lib/extension";
 import styles from "./Dashboard.module.css";
 
 export type TimelineItem = { id: string; content: string; meta: string };
@@ -60,7 +61,10 @@ export default function MemoryTimeline({
     const next = !enabled;
     startTransition(async () => {
       const result = await updateSettings({ memoryEnabled: next });
-      if (result.ok) setEnabled(next);
+      if (result.ok) {
+        setEnabled(next);
+        notifyExtension();
+      }
       else setError(result.error);
     });
   }

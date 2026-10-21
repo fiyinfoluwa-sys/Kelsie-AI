@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 
 // Pages that need a signed-in user.
-const PROTECTED = ["/onboarding", "/profile", "/settings", "/reset-password"];
+const PROTECTED = ["/onboarding", "/profile", "/settings", "/reset-password", "/connect-extension"];
 // Pages that make no sense once signed in.
 const SIGNED_OUT_ONLY = ["/signin", "/signup"];
 

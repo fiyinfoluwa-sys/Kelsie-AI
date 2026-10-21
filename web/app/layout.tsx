@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
+import ExtensionSync from "@/components/ExtensionSync";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -36,7 +37,10 @@ export default function RootLayout({
       // Keeps smooth scrolling for in-page links but not page changes.
       data-scroll-behavior="smooth"
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <ExtensionSync />
+      </body>
     </html>
   );
 }

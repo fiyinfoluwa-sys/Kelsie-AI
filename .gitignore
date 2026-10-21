@@ -32,3 +32,5 @@ test_openai.py
 
 # Archived legacy files
 archive/
+# Packaged Chrome extension zips
+dist/

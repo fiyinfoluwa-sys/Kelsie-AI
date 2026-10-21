@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Logo from "./Logo";
+import { useRouter } from "next/navigation";
 import Orb from "./Orb";
 import SpeechBubble from "./SpeechBubble";
+import SplitScreen from "./SplitScreen";
 import { GoogleIcon } from "./icons";
 import styles from "./AuthPage.module.css";
 
@@ -43,6 +44,7 @@ const STEPS = [
 ];
 
 export default function AuthPage({ initialMode }: { initialMode: Mode }) {
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -55,148 +57,169 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
     window.history.replaceState(null, "", COPY[next].path);
   }
 
-  function preview(event?: React.FormEvent) {
-    event?.preventDefault();
-    setNotice(
-      "Sign-in isn't hooked up yet. This page is a preview for now."
-    );
+  // Real accounts aren't wired up yet: sign-up goes straight to
+  // onboarding, and sign-in explains that it's a preview.
+  function continueWithGoogle() {
+    if (mode === "signup") {
+      router.push("/onboarding");
+    } else {
+      showPreviewNotice();
+    }
   }
 
+  function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const email = form.elements.namedItem("email") as HTMLInputElement;
+    const password = form.elements.namedItem("password") as HTMLInputElement;
+
+    if (!email.validity.valid) {
+      setNotice("That email doesn't look quite right.");
+      email.focus();
+      return;
+    }
+    if (!password.validity.valid) {
+      setNotice("Passwords need at least 8 characters.");
+      password.focus();
+      return;
+    }
+
+    if (mode === "signup") {
+      router.push("/onboarding");
+    } else {
+      showPreviewNotice();
+    }
+  }
+
+  function showPreviewNotice() {
+    setNotice("Sign-in isn't hooked up yet. This page is a preview for now.");
+  }
+
+  const panel = (
+    <>
+      <div className={styles.panelArt}>
+        <Orb size={150} />
+        <SpeechBubble tone="dark" className={styles.panelBubble}>
+          three quick steps and I&apos;m all yours.
+        </SpeechBubble>
+      </div>
+
+      <ol className={styles.steps}>
+        {STEPS.map((step, index) => (
+          <li key={step.title} className={styles.step}>
+            <span className={styles.stepNumber}>{index + 1}</span>
+            <div>
+              <h2 className={styles.stepTitle}>{step.title}</h2>
+              <p className={styles.stepBody}>{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </>
+  );
+
   return (
-    <div className={styles.page}>
-      <main className={styles.formSide}>
-        <div className={styles.formTop}>
-          <Logo />
-        </div>
+    <SplitScreen panel={panel} panelLabel="How setup works">
+      <div className={styles.toggle} role="group" aria-label="Account">
+        <button
+          type="button"
+          aria-pressed={mode === "signup"}
+          onClick={() => switchMode("signup")}
+        >
+          Sign up
+        </button>
+        <button
+          type="button"
+          aria-pressed={mode === "signin"}
+          onClick={() => switchMode("signin")}
+        >
+          Sign in
+        </button>
+      </div>
 
-        <div className={styles.formWrap}>
-          <div className={styles.toggle} role="group" aria-label="Account">
-            <button
-              type="button"
-              aria-pressed={mode === "signup"}
-              onClick={() => switchMode("signup")}
-            >
-              Sign up
-            </button>
-            <button
-              type="button"
-              aria-pressed={mode === "signin"}
-              onClick={() => switchMode("signin")}
-            >
-              Sign in
-            </button>
-          </div>
+      <h1 className={styles.title}>{copy.title}</h1>
+      <p className={styles.subtitle}>{copy.subtitle}</p>
 
-          <h1 className={styles.title}>{copy.title}</h1>
-          <p className={styles.subtitle}>{copy.subtitle}</p>
+      <button
+        type="button"
+        className={`btn ${styles.google}`}
+        onClick={continueWithGoogle}
+      >
+        <GoogleIcon />
+        Continue with Google
+      </button>
 
-          <button
-            type="button"
-            className={`btn ${styles.google}`}
-            onClick={() => preview()}
-          >
-            <GoogleIcon />
-            Continue with Google
-          </button>
+      <div className={styles.divider}>
+        <span>or use email</span>
+      </div>
 
-          <div className={styles.divider}>
-            <span>or use email</span>
-          </div>
+      <form className={styles.form} onSubmit={submit} noValidate>
+        <label className={styles.field}>
+          <span>Email</span>
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            placeholder="you@school.edu"
+            required
+          />
+        </label>
 
-          <form className={styles.form} onSubmit={preview} noValidate>
-            <label className={styles.field}>
-              <span>Email</span>
-              <input
-                type="email"
-                name="email"
-                autoComplete="email"
-                placeholder="you@school.edu"
-                required
-              />
-            </label>
-
-            <label className={styles.field}>
-              <span className={styles.labelRow}>
-                Password
-                {mode === "signin" && (
-                  <button
-                    type="button"
-                    className={styles.forgot}
-                    onClick={() => preview()}
-                  >
-                    Forgot it?
-                  </button>
-                )}
-              </span>
-              <span className={styles.passwordWrap}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  autoComplete={
-                    mode === "signup" ? "new-password" : "current-password"
-                  }
-                  placeholder={
-                    mode === "signup" ? "At least 8 characters" : "Your password"
-                  }
-                  minLength={8}
-                  required
-                />
-                <button
-                  type="button"
-                  className={styles.reveal}
-                  onClick={() => setShowPassword((shown) => !shown)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </span>
-            </label>
-
-            <button type="submit" className={`btn btn-primary ${styles.submit}`}>
-              {copy.submit}
-            </button>
-
-            <p className={styles.notice} role="status">
-              {notice}
-            </p>
-          </form>
-
-          <p className={styles.switch}>
-            {mode === "signup" ? "Already have an account? " : "New here? "}
-            <button
-              type="button"
-              onClick={() =>
-                switchMode(mode === "signup" ? "signin" : "signup")
+        <label className={styles.field}>
+          <span className={styles.labelRow}>
+            Password
+            {mode === "signin" && (
+              <button
+                type="button"
+                className={styles.forgot}
+                onClick={showPreviewNotice}
+              >
+                Forgot it?
+              </button>
+            )}
+          </span>
+          <span className={styles.passwordWrap}>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              autoComplete={
+                mode === "signup" ? "new-password" : "current-password"
               }
+              placeholder={
+                mode === "signup" ? "At least 8 characters" : "Your password"
+              }
+              minLength={8}
+              required
+            />
+            <button
+              type="button"
+              className={styles.reveal}
+              onClick={() => setShowPassword((shown) => !shown)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {mode === "signup" ? "Sign in" : "Create one"}
+              {showPassword ? "Hide" : "Show"}
             </button>
-          </p>
-        </div>
-      </main>
+          </span>
+        </label>
 
-      <aside className={styles.panel} aria-label="How setup works">
-        <div className={styles.panelInner}>
-          <div className={styles.panelArt}>
-            <Orb size={150} />
-            <SpeechBubble tone="dark" className={styles.panelBubble}>
-              three quick steps and I&apos;m all yours.
-            </SpeechBubble>
-          </div>
+        <button type="submit" className={`btn btn-primary ${styles.submit}`}>
+          {copy.submit}
+        </button>
 
-          <ol className={styles.steps}>
-            {STEPS.map((step, index) => (
-              <li key={step.title} className={styles.step}>
-                <span className={styles.stepNumber}>{index + 1}</span>
-                <div>
-                  <h2 className={styles.stepTitle}>{step.title}</h2>
-                  <p className={styles.stepBody}>{step.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </aside>
-    </div>
+        <p className={styles.notice} role="status">
+          {notice}
+        </p>
+      </form>
+
+      <p className={styles.switch}>
+        {mode === "signup" ? "Already have an account? " : "New here? "}
+        <button
+          type="button"
+          onClick={() => switchMode(mode === "signup" ? "signin" : "signup")}
+        >
+          {mode === "signup" ? "Sign in" : "Create one"}
+        </button>
+      </p>
+    </SplitScreen>
   );
 }

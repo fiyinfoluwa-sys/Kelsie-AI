@@ -1,0 +1,410 @@
+/* Progress header */
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 460px;
+}
+
+.progressLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.progressTrack {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(23, 22, 28, 0.08);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--violet);
+  transition: width 0.35s ease;
+}
+
+/* Step content */
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: clamp(32px, 5vw, 44px);
+  font-weight: 800;
+}
+
+.title:focus {
+  outline: none;
+}
+
+.subtitle {
+  margin-top: 10px;
+  margin-bottom: 32px;
+  color: var(--ink-muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  font-size: 18px;
+  font-weight: 400;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field select {
+  min-height: 52px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.field input::placeholder {
+  color: #9a98a3;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--violet);
+  box-shadow: 0 0 0 4px rgba(107, 78, 255, 0.15);
+}
+
+/* Selectable cards (roles and vibes) */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.cardsStacked {
+  grid-template-columns: 1fr;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.card:hover {
+  box-shadow: inset 0 0 0 1.5px var(--violet);
+}
+
+.card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card:has(input:checked) {
+  background: var(--violet-soft);
+  box-shadow: inset 0 0 0 2px var(--violet);
+}
+
+.card:has(input:focus-visible) {
+  outline: 3px solid var(--violet);
+  outline-offset: 3px;
+}
+
+/* Checkbox mark on multi-select cards. */
+.cardCheck {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1.5px rgba(23, 22, 28, 0.25);
+  color: transparent;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cardCheck svg {
+  width: 16px;
+  height: 16px;
+}
+
+.card:has(input:checked) .cardCheck {
+  background: var(--violet);
+  box-shadow: none;
+  color: #fff;
+}
+
+.cardTitle {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.cardDetail {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+/* Timezone */
+
+.timezone {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.zoneCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background: var(--violet-soft);
+  box-shadow: inset 0 0 0 2px var(--violet);
+}
+
+.zoneName {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.zoneTime {
+  color: var(--ink-muted);
+}
+
+/* Sites */
+
+.sites {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.site {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 0 18px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.site input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.site:has(input:focus-visible) {
+  outline: 3px solid var(--violet);
+  outline-offset: 3px;
+}
+
+.checkbox {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1.5px rgba(23, 22, 28, 0.25);
+  color: transparent;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.checkbox svg {
+  width: 16px;
+  height: 16px;
+}
+
+.site:has(input:checked) .checkbox {
+  background: var(--violet);
+  box-shadow: none;
+  color: #fff;
+}
+
+.privacyNote {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: rgba(23, 22, 28, 0.04);
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.privacyNote h2 {
+  margin-bottom: 6px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+.privacyNote ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* Back / Continue */
+
+.nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.continue {
+  flex: 1;
+}
+
+.continue:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Done */
+
+.doneActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.notice {
+  min-height: 1.6em;
+  margin: 12px 0 20px;
+  font-size: 14px;
+  color: var(--violet);
+}
+
+.summary {
+  margin: 0;
+  padding: 8px 22px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.summaryRow {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.summaryRow:last-child {
+  border-bottom: 0;
+}
+
+.summaryRow dt {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.summaryRow dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.summaryRow button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--violet);
+  cursor: pointer;
+}
+
+.summaryRow button:hover {
+  text-decoration: underline;
+}
+
+/* Dark panel */
+
+.panelArt {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 32px;
+}
+
+.bubble {
+  max-width: 340px;
+  font-size: 17px;
+}
+
+.message {
+  display: block;
+  animation: appear 0.25s ease;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 520px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .doneActions :global(.btn) {
+    flex: 1 1 100%;
+  }
+
+  .summaryRow {
+    grid-template-columns: 1fr auto;
+  }
+
+  .summaryRow dd {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

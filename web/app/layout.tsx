@@ -30,7 +30,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`${bricolage.variable} ${inter.variable}`}
+      // Keeps smooth scrolling for in-page links but not page changes.
+      data-scroll-behavior="smooth"
+    >
       <body>{children}</body>
     </html>
   );

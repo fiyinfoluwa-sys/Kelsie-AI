@@ -1,0 +1,70 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.option {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.option:hover {
+  box-shadow: inset 0 0 0 1.5px var(--violet);
+}
+
+.option[aria-pressed="true"] {
+  background: var(--violet);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(107, 78, 255, 0.28);
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  min-height: 160px;
+}
+
+.bubble {
+  max-width: 360px;
+  font-size: 17px;
+}
+
+.message {
+  display: block;
+  animation: appear 0.25s ease;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 520px) {
+  .stage {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+}

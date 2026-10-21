@@ -1,0 +1,31 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.light {
+  color: var(--ink);
+}
+
+.dark {
+  color: var(--on-dark);
+}
+
+.dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    #ffffff 0%,
+    #d9d8de 30%,
+    #8f8e98 100%
+  );
+  box-shadow: 0 0 12px rgba(160, 158, 172, 0.6);
+}

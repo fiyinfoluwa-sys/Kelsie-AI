@@ -1,0 +1,48 @@
+.bubble {
+  position: relative;
+  max-width: 300px;
+  padding: 14px 18px;
+  border-radius: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+  box-shadow: var(--shadow-card);
+}
+
+.light {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.dark {
+  background: var(--dark-surface);
+  color: var(--on-dark);
+  box-shadow: none;
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: inherit;
+  transform: rotate(45deg);
+  border-radius: 3px;
+}
+
+.left {
+  border-bottom-left-radius: 8px;
+}
+
+.left::after {
+  left: -6px;
+  bottom: 14px;
+}
+
+.bottom {
+  border-bottom-left-radius: 8px;
+}
+
+.bottom::after {
+  left: 28px;
+  bottom: -6px;
+}

@@ -1,0 +1,291 @@
+/* Hero */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 48px;
+  padding-top: 88px;
+  padding-bottom: 96px;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.heroTitle {
+  font-size: clamp(56px, 9vw, 104px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.heroLede {
+  max-width: 34ch;
+  font-size: clamp(18px, 2vw, 20px);
+  color: var(--ink-muted);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.heroNote {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.heroArt {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+}
+
+.heroBubble {
+  align-self: center;
+  margin-left: 120px;
+  order: -1;
+}
+
+/* Sections */
+
+.section {
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  max-width: 18ch;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+}
+
+.sectionLede {
+  max-width: 44ch;
+  font-size: 18px;
+  color: var(--ink-muted);
+}
+
+/* Feature cards */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 24px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.cardIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  background: var(--violet-soft);
+  color: var(--violet);
+}
+
+.cardTitle {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.cardBody {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+/* Vibes */
+
+.vibes {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: center;
+  gap: 48px;
+  padding: 56px;
+  border-radius: 32px;
+  background: var(--violet-soft);
+}
+
+.vibes .sectionHead {
+  margin-bottom: 0;
+}
+
+/* Privacy */
+
+.privacy {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 48px;
+}
+
+.privacyList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.privacyItem {
+  display: flex;
+  gap: 14px;
+}
+
+.check {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--on-dark);
+}
+
+.check svg {
+  width: 18px;
+  height: 18px;
+}
+
+.privacyTitle {
+  margin-bottom: 4px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.privacyBody {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+/* Dark sign-up section and footer */
+
+.signup,
+.footer {
+  background: var(--dark);
+  color: var(--on-dark);
+}
+
+.signup {
+  margin-top: 72px;
+  border-radius: 40px 40px 0 0;
+}
+
+.signupInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding-top: 104px;
+  padding-bottom: 96px;
+  text-align: center;
+}
+
+.signupTitle {
+  max-width: 16ch;
+  margin-top: 24px;
+  font-size: clamp(36px, 6vw, 60px);
+  font-weight: 800;
+}
+
+.signupLede {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: var(--on-dark-muted);
+}
+
+.footerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+  border-top: 1px solid var(--dark-line);
+  font-size: 14px;
+  color: var(--on-dark-muted);
+}
+
+/* Responsive */
+
+@media (max-width: 1000px) {
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .vibes,
+  .privacy {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-top: 48px;
+    padding-bottom: 56px;
+  }
+
+  .heroBubble {
+    margin-left: 0;
+  }
+
+  .section {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .vibes {
+    padding: 32px 20px;
+    border-radius: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .features,
+  .privacyList {
+    grid-template-columns: 1fr;
+  }
+
+  .heroActions {
+    width: 100%;
+  }
+
+  .heroActions :global(.btn) {
+    flex: 1 1 100%;
+  }
+
+  .signup {
+    border-radius: 28px 28px 0 0;
+  }
+}

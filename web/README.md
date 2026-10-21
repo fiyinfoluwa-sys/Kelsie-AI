@@ -37,7 +37,7 @@ Open <http://localhost:3000>.
 ### 1. Supabase project
 
 1. Create a project at <https://supabase.com/dashboard> (Free plan). Save the database password in a password manager.
-2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same, in order, with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql), [`0003_memories_deadlines_applications.sql`](supabase/migrations/0003_memories_deadlines_applications.sql) and [`0004_extension_sessions.sql`](supabase/migrations/0004_extension_sessions.sql).
+2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same, in order, with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql), [`0003_memories_deadlines_applications.sql`](supabase/migrations/0003_memories_deadlines_applications.sql) [`0004_extension_sessions.sql`](supabase/migrations/0004_extension_sessions.sql) and [`0005_memory_capture.sql`](supabase/migrations/0005_memory_capture.sql).
    - Optional, for your own test account only: [`supabase/seed/sample_data.sql`](supabase/seed/sample_data.sql) adds sample memories, deadlines and applications. Replace `YOUR_EMAIL_HERE` in the SQL Editor before running it, and don't commit your email.
 3. **Authentication → Sign In / Providers → Email**: keep **Confirm email** on and set **Minimum password length** to `8`.
 4. **Authentication → URL Configuration**:
@@ -74,9 +74,16 @@ Open <http://localhost:3000>.
 4. Paste the client ID and secret into **Supabase → Authentication → Sign In / Providers → Google**, and enable it. The Google secret stays in Supabase; the app never sees it.
 5. Set `GOOGLE_SIGN_IN=on` in `web/.env.local` and in Vercel to show the "Continue with Google" button. While it's off, the button is hidden and the server refuses Google sign-in.
 
-### 3. Vercel
+### 3. Groq (AI notes)
 
-**Project → Settings → Environment Variables**: add `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for Production (and Development if you use `vercel dev`). Mark them **Sensitive**. Then redeploy.
+1. Sign up at <https://console.groq.com> (free tier).
+2. **Settings → Data Controls**: turn on **Zero Data Retention**.
+3. **API Keys → Create API Key**, name it `kelsie-web`, copy it once.
+4. Add it as `GROQ_API_KEY` in `web/.env.local` and in Vercel. Never in the extension or the repo.
+
+### 4. Vercel
+
+**Project → Settings → Environment Variables**: add `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` and `GROQ_API_KEY` for Production (and Development if you use `vercel dev`). Mark them **Sensitive**. Then redeploy.
 
 ### Before inviting real users
 

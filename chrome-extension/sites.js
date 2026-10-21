@@ -85,3 +85,59 @@ export function urlMatches(pattern, href) {
   }
   return url.hostname === host;
 }
+
+// ------------------------------------------------------------
+// Memory: which pages Kelsie may take notes on
+// ------------------------------------------------------------
+
+/*
+ * Words that mark a page as sensitive when they appear as a part of the
+ * address (a host label or path segment). Kelsie never reads these pages,
+ * even on allowed sites.
+ */
+const SENSITIVE_WORDS = new Set([
+  "login", "log-in", "signin", "sign-in", "signup", "sign-up", "auth", "oauth", "sso",
+  "password", "passwords", "passwd", "2fa", "mfa", "verify", "security",
+  "checkout", "cart", "basket", "payment", "payments", "pay", "billing", "invoice", "invoices",
+  "bank", "banking", "onlinebanking", "wallet", "paypal", "stripe", "venmo", "crypto",
+  "health", "medical", "patient", "patients", "clinic", "pharmacy", "therapy", "mychart",
+  "insurance", "tax", "taxes",
+]);
+const SENSITIVE_HOSTS = ["accounts.google.com", "myaccount.google.com", "pay.google.com", "payments.google.com"];
+
+export function isSensitiveUrl(href) {
+  let url;
+  try {
+    url = new URL(href);
+  } catch {
+    return true;
+  }
+  if (SENSITIVE_HOSTS.includes(url.hostname)) return true;
+  const parts = [...url.hostname.split("."), ...url.pathname.toLowerCase().split(/[/._]+/)];
+  return parts.some((part) => SENSITIVE_WORDS.has(part) || /bank|checkout|password/.test(part));
+}
+
+const TRACKING_PARAMS = /^(utm_.*|fbclid|gclid|dclid|msclkid|mc_cid|mc_eid|ref|ref_src|si|igshid)$/i;
+
+/**
+ * The address used to recognise "the same page" again: no tracking
+ * parameters, and no #fragment unless it's an app route like Gmail's
+ * "#inbox/<message>". Only a hash of this ever leaves the extension.
+ */
+export function normalizeUrl(href) {
+  const url = new URL(href);
+  const params = [...url.searchParams.entries()]
+    .filter(([key]) => !TRACKING_PARAMS.test(key))
+    .sort(([a], [b]) => a.localeCompare(b));
+  const query = params.length ? `?${new URLSearchParams(params)}` : "";
+  const hash = url.hash.includes("/") ? url.hash : "";
+  return `${url.protocol}//${url.hostname.toLowerCase()}${url.pathname}${query}${hash}`;
+}
+
+/** Which allowed site a page belongs to (a specific site beats "Every other site"). */
+export function siteForUrl(allowedSiteIds, href) {
+  const matching = SITES.filter(
+    (site) => allowedSiteIds.includes(site.id) && site.patterns.some((p) => urlMatches(p, href)),
+  );
+  return (matching.find((s) => s.id !== "everything_else") ?? matching[0])?.id ?? null;
+}

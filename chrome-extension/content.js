@@ -6,9 +6,19 @@
  *    reach inside it, and the website's CSS can't restyle it.
  *  - Built with createElement/textContent only. No innerHTML, no eval, no
  *    remote code.
- *  - Reads nothing from the page: no text, no form fields, no passwords.
- *  - Holds no secrets. It can only ask the background worker "should I
- *    show here?", "hide me on this site" and "open the profile".
+ *  - Holds no secrets. It can only talk to the background worker, which
+ *    decides what's allowed using the address Chrome reports.
+ *
+ * Memory (only where the background says read: true):
+ *  - After 30 seconds of real activity on a page (tab visible and focused,
+ *    and you scrolled, typed or moved the mouse in the last minute), it
+ *    takes the page's main readable text once and hands it to the
+ *    background worker. Activity is tracked as timestamps only; which
+ *    keys you press is never looked at.
+ *  - Never on pages with password or payment fields.
+ *  - The text comes from an offline copy of the page with every form
+ *    field, editable area and hidden element removed first, then
+ *    Mozilla Readability picks out the article. Capped at 6,000 characters.
  */
 (() => {
   // The script can be injected twice (registered + injected into an open
@@ -51,6 +61,37 @@
       transition: transform 0.15s ease;
     }
     .orb:hover { transform: scale(1.06); }
+    .orb.pulse { animation: pulse 1.4s ease-out 2; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(107, 78, 255, 0.45), 0 6px 16px rgba(23, 22, 28, 0.18); }
+      100% { box-shadow: 0 0 0 18px rgba(107, 78, 255, 0), 0 6px 16px rgba(23, 22, 28, 0.18); }
+    }
+    .toast {
+      position: absolute;
+      right: 0;
+      bottom: 60px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #17161c;
+      box-shadow: 0 8px 20px rgba(23, 22, 28, 0.2);
+      white-space: nowrap;
+      font-size: 13px;
+    }
+    .toast[hidden] { display: none; }
+    .toast, .toast * { color: #f7f6f2; }
+    .toast button {
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      font-weight: 700;
+      color: #b8a9ff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
     .orb:focus-visible { outline: 3px solid #6b4eff; outline-offset: 3px; }
     .panel {
       position: absolute;
@@ -87,12 +128,14 @@
     .secondary { background: transparent; color: #17161c; box-shadow: inset 0 0 0 1.5px #e4e1ec; }
     .secondary:hover { box-shadow: inset 0 0 0 1.5px #17161c; }
     button.action:focus-visible { outline: 3px solid #6b4eff; outline-offset: 2px; }
-    @media (prefers-reduced-motion: reduce) { .orb { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .orb { transition: none; } .orb.pulse { animation: none; } }
   `;
 
   let host = null;
   let orb = null;
   let panel = null;
+  let toast = null;
+  let toastTimer = 0;
 
   function element(tag, className, text) {
     const node = document.createElement(tag);
@@ -160,7 +203,11 @@
     actions.append(profile, hide);
     panel.append(head, text, actions);
 
-    root.append(panel, orb);
+    toast = element("div", "toast");
+    toast.hidden = true;
+    toast.setAttribute("role", "status");
+
+    root.append(panel, toast, orb);
 
     root.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && !panel.hidden) {
@@ -179,8 +226,188 @@
 
   function teardown() {
     document.removeEventListener("click", onOutsideClick, true);
+    window.clearTimeout(toastTimer);
     host?.remove();
-    host = orb = panel = null;
+    host = orb = panel = toast = null;
+  }
+
+  // ------------------------------------------------------------
+  // "Saved a note · Undo"
+  // ------------------------------------------------------------
+
+  function showToast(text, withUndo) {
+    if (!toast) return;
+    window.clearTimeout(toastTimer);
+    toast.replaceChildren(document.createTextNode(text));
+    if (withUndo) {
+      const undo = element("button", null, "Undo");
+      undo.type = "button";
+      undo.addEventListener("click", async () => {
+        window.clearTimeout(toastTimer);
+        const reply = await send({ type: "kelsie-undo" });
+        showToast(reply?.undone ? "Note removed" : "Couldn't undo", false);
+      });
+      toast.append(document.createTextNode(" · "), undo);
+    }
+    toast.hidden = false;
+    toastTimer = window.setTimeout(() => {
+      if (toast) toast.hidden = true;
+    }, withUndo ? 6000 : 2500);
+  }
+
+  function celebrateSave() {
+    if (!orb) return;
+    orb.classList.remove("pulse");
+    void orb.offsetWidth; // restart the animation
+    orb.classList.add("pulse");
+    if (panel) panel.hidden = true;
+    showToast("Saved a note", true);
+  }
+
+  // ------------------------------------------------------------
+  // Memory: 30 active seconds, then one note per page
+  // ------------------------------------------------------------
+
+  const ACTIVE_SECONDS_NEEDED = 30;
+  const IDLE_AFTER_MS = 60_000;
+  const MAX_TEXT = 6000;
+  const MAX_ELEMENTS = 20_000;
+
+  let reading = false;
+  let tick = 0;
+  let activeSeconds = 0;
+  // No credit until the person actually interacts with the page: a tab
+  // that's open but untouched never produces a note.
+  let lastActivity = 0;
+  let pageUrl = location.href;
+  let notedThisPage = false;
+
+  // Only *when* something happened is recorded, never what was typed.
+  const noteActivity = () => {
+    lastActivity = Date.now();
+  };
+  const ACTIVITY_EVENTS = ["scroll", "wheel", "keydown", "pointerdown", "pointermove", "touchstart"];
+
+  function startReading() {
+    if (reading) return;
+    reading = true;
+    for (const type of ACTIVITY_EVENTS) {
+      window.addEventListener(type, noteActivity, { capture: true, passive: true });
+    }
+    tick = window.setInterval(onTick, 1000);
+  }
+
+  function stopReading() {
+    if (!reading) return;
+    reading = false;
+    for (const type of ACTIVITY_EVENTS) window.removeEventListener(type, noteActivity, { capture: true });
+    window.clearInterval(tick);
+  }
+
+  function onTick() {
+    // Single-page apps change the address without reloading.
+    if (location.href !== pageUrl) {
+      pageUrl = location.href;
+      activeSeconds = 0;
+      notedThisPage = false;
+    }
+    if (notedThisPage) return;
+    const active =
+      document.visibilityState === "visible" &&
+      document.hasFocus() &&
+      Date.now() - lastActivity < IDLE_AFTER_MS;
+    if (!active) return;
+    activeSeconds += 1;
+    if (activeSeconds >= ACTIVE_SECONDS_NEEDED) {
+      notedThisPage = true;
+      takeNote();
+    }
+  }
+
+  /** Pages where Kelsie never reads anything. */
+  function hasSensitiveFields() {
+    return Boolean(
+      document.querySelector(
+        [
+          'input[type="password"]',
+          'input[autocomplete^="cc-"]',
+          'input[autocomplete="current-password"]',
+          'input[autocomplete="new-password"]',
+          'input[autocomplete="one-time-code"]',
+          'input[name*="card" i]',
+          'input[name*="cvv" i]',
+          'input[name*="cvc" i]',
+          'input[id*="card" i]',
+          'iframe[src*="stripe" i]',
+          'iframe[src*="paypal" i]',
+          'iframe[src*="braintree" i]',
+          'iframe[src*="adyen" i]',
+        ].join(","),
+      ),
+    );
+  }
+
+  function isVisible(el) {
+    if (typeof el.checkVisibility === "function") {
+      return el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true });
+    }
+    const style = getComputedStyle(el);
+    return style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0";
+  }
+
+  // Removed from the offline copy before anything is read.
+  const NEVER_READ = [
+    "input", "textarea", "select", "option", "button", "label",
+    '[contenteditable]:not([contenteditable="false"])', '[role="textbox"]', '[role="searchbox"]',
+    "[hidden]", '[aria-hidden="true"]',
+    "script", "style", "noscript", "template", "iframe", "object", "embed", "svg", "canvas",
+    "nav", "footer", "aside", "kelsie-orb-root",
+  ].join(",");
+
+  /** The page's main readable text, or null. Reads an offline copy only. */
+  function extractReadable() {
+    const liveRoot = document.body;
+    if (!liveRoot || typeof Readability !== "function") return null;
+
+    // Copy the page (the copy has no window: nothing in it runs or loads),
+    // then drop everything that's hidden on the real page.
+    const copy = document.cloneNode(true);
+    const liveWalker = document.createTreeWalker(liveRoot, NodeFilter.SHOW_ELEMENT);
+    const copyWalker = copy.createTreeWalker(copy.body, NodeFilter.SHOW_ELEMENT);
+    const hidden = [];
+    let live = liveWalker.currentNode;
+    let copied = copyWalker.currentNode;
+    for (let i = 0; live && copied && i < MAX_ELEMENTS; i += 1) {
+      if (!isVisible(live)) hidden.push(copied);
+      live = liveWalker.nextNode();
+      copied = copyWalker.nextNode();
+    }
+    for (const node of hidden) node.remove();
+    for (const node of copy.querySelectorAll(NEVER_READ)) node.remove();
+
+    const article = new Readability(copy, { charThreshold: 300 }).parse();
+    const text = article?.textContent?.replace(/\s+/g, " ").trim();
+    if (!text) return null;
+    return {
+      title: (document.title || article.title || "").trim().slice(0, 200),
+      text: text.slice(0, MAX_TEXT),
+    };
+  }
+
+  async function takeNote() {
+    // Checked again right before reading, in case the page changed.
+    if (hasSensitiveFields()) return;
+    let page;
+    try {
+      page = extractReadable();
+    } catch {
+      return;
+    }
+    if (!page || page.text.length < 200) return;
+    const reply = await send({ type: "kelsie-page-text", title: page.title, text: page.text });
+    // The text isn't kept here either.
+    page = null;
+    if (reply?.saved) celebrateSave();
   }
 
   /** Asks the background worker whether the orb belongs on this page. */
@@ -191,6 +418,8 @@
     } else {
       teardown();
     }
+    if (reply?.show && reply.read) startReading();
+    else stopReading();
   }
 
   chrome.runtime.onMessage.addListener((message, sender) => {

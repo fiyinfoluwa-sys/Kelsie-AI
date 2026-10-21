@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kelsie",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Your ambient AI sidekick. Runs only on the sites you choose.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGB1YlSpDN2M3ScBKWinT8fkDXwMm1VDZjKns2C6rzazPOQIuioovZk/UCAtdfVZtXEBEm30AZgdervoIZmhi4+v84GeqmH3UnB4YjVtG63/XzxFCu1p8UqfUPgR+iptqj3BOzI5FQMJkQ4PxPTDELwBaX+qZZQQLxCGXFbno4iM/1ykWUJ7wJVoIZJu/inHyWl//NJmXMjw8lVScM8IwZlZWb6XKfKRrrn0rhr8s5bmC/Lu0KiVfnGQyTpLFHvJffQAjwEu16wTx/TB254DGahmxgK3I51+N89+1cWZ4PZQrYSu635U9GqUBaU7UIGRazwQk9osQBeNpybmyNqZnQIDAQAB",
   "minimum_chrome_version": "120",

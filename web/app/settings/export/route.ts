@@ -25,7 +25,7 @@ export async function GET() {
       .maybeSingle(),
     supabase
       .from("memories")
-      .select("content, source, created_at, updated_at")
+      .select("content, source, page_title, created_at, updated_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
     supabase

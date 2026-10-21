@@ -7,9 +7,23 @@
  */
 
 import { SITE_ORIGIN, SITE_URL } from "./config.js";
-import { SITES, isSiteId, patternsFor, urlMatches } from "./sites.js";
+import {
+  SITES,
+  isSensitiveUrl,
+  isSiteId,
+  normalizeUrl,
+  patternsFor,
+  siteForUrl,
+  urlMatches,
+} from "./sites.js";
 
 const SCRIPT_ID = "kelsie-orb";
+// Readability runs first, in the same isolated world as the orb script.
+const SCRIPT_FILES = ["vendor/readability/Readability.js", "content.js"];
+const MAX_TITLE = 300;
+const MAX_TEXT = 6000;
+// The same page isn't sent again for this long (the server also dedupes).
+const RESEND_AFTER_MS = 10 * 60 * 1000;
 const SYNC_ALARM = "kelsie-sync";
 const CONNECT_WINDOW_MS = 10 * 60 * 1000;
 const VIBES = new Set(["chill", "hype", "direct"]);
@@ -136,7 +150,7 @@ async function applySites(allowedSiteIds) {
     const script = {
       id: SCRIPT_ID,
       matches: active,
-      js: ["content.js"],
+      js: SCRIPT_FILES,
       runAt: "document_idle",
       allFrames: false,
       persistAcrossSessions: true,
@@ -171,22 +185,114 @@ async function injectIntoOpenTabs() {
       tab.id === undefined
         ? null
         : // Fails quietly on any tab Kelsie has no permission for.
-          chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }).catch(() => {}),
+          chrome.scripting.executeScript({ target: { tabId: tab.id }, files: SCRIPT_FILES }).catch(() => {}),
     ),
   );
 }
 
-/** Should the orb show on this page? Decided here, not in the page. */
-async function shouldShow(url) {
+/**
+ * What the content script may do on this page. Decided here, from the
+ * address Chrome reports (sender.url), never from anything the page says.
+ *  - show: the orb belongs here.
+ *  - read: Kelsie may take a note here (memory on, not incognito, not a
+ *    sensitive-looking address).
+ */
+async function pageRules(url, tab) {
   const { token, account, activePatterns = [], hiddenHosts = [] } = await chrome.storage.local.get([
     "token",
     "account",
     "activePatterns",
     "hiddenHosts",
   ]);
-  if (!token || !account || !url) return false;
-  if (!activePatterns.some((pattern) => urlMatches(pattern, url))) return false;
-  return !hiddenHosts.includes(new URL(url).hostname);
+  const none = { show: false, read: false };
+  if (!token || !account || !url) return none;
+  if (!activePatterns.some((pattern) => urlMatches(pattern, url))) return none;
+  if (hiddenHosts.includes(new URL(url).hostname)) return none;
+  const read =
+    account.memoryEnabled === true &&
+    !tab?.incognito &&
+    !isSensitiveUrl(url) &&
+    siteForUrl(account.allowedSites, url) !== null;
+  return { show: true, read };
+}
+
+// ------------------------------------------------------------
+// Memory notes
+// ------------------------------------------------------------
+
+async function sha256Hex(text) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Sends a page's readable text to the Kelsie website, which writes and
+ * saves one short note and throws the text away. Every rule is checked
+ * again here first. Failures are quiet: no retries.
+ */
+async function savePageNote(message, sender) {
+  const url = sender.url;
+  const rules = await pageRules(url, sender.tab);
+  if (!rules.read) return { saved: false };
+  if (typeof message.title !== "string" || typeof message.text !== "string") return { saved: false };
+
+  const { token, account } = await chrome.storage.local.get(["token", "account"]);
+  const source = siteForUrl(account.allowedSites, url);
+  // Only a one-way hash of the address leaves the browser.
+  const pageKey = await sha256Hex(normalizeUrl(url));
+
+  const { recentPages = {} } = await chrome.storage.session.get("recentPages");
+  const now = Date.now();
+  if (recentPages[pageKey] && now - recentPages[pageKey] < RESEND_AFTER_MS) return { saved: false };
+  recentPages[pageKey] = now;
+  for (const [key, at] of Object.entries(recentPages)) if (now - at > RESEND_AFTER_MS) delete recentPages[key];
+  await chrome.storage.session.set({ recentPages });
+
+  let response;
+  try {
+    response = await api("/api/extension/memories", {
+      method: "POST",
+      token,
+      body: {
+        source,
+        pageKey,
+        title: message.title.slice(0, MAX_TITLE),
+        text: message.text.slice(0, MAX_TEXT),
+      },
+    });
+  } catch {
+    return { saved: false };
+  }
+  if (response.status === 401) {
+    await logOut();
+    return { saved: false };
+  }
+  const data = await response.json().catch(() => null);
+  if (!response.ok || data?.saved !== true || typeof data.id !== "string") return { saved: false };
+
+  // Remembered per tab so only that tab's "Undo" can delete it.
+  const { lastSaved = {} } = await chrome.storage.session.get("lastSaved");
+  lastSaved[sender.tab.id] = { id: data.id, at: now };
+  await chrome.storage.session.set({ lastSaved });
+  return { saved: true };
+}
+
+async function undoPageNote(sender) {
+  const { lastSaved = {} } = await chrome.storage.session.get("lastSaved");
+  const entry = lastSaved[sender.tab.id];
+  if (!entry || Date.now() - entry.at > 60_000) return { undone: false };
+  delete lastSaved[sender.tab.id];
+  await chrome.storage.session.set({ lastSaved });
+
+  const { token } = await chrome.storage.local.get("token");
+  if (!token) return { undone: false };
+  const response = await api("/api/extension/memories/undo", {
+    method: "POST",
+    token,
+    body: { id: entry.id },
+  }).catch(() => null);
+  const data = await response?.json().catch(() => null);
+  return { undone: data?.deleted === true };
 }
 
 /** Allowed sites the user still needs to grant Chrome permission for. */
@@ -281,12 +387,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (sender.id !== chrome.runtime.id) return false;
   const fromExtensionPage = typeof sender.url === "string" && sender.url.startsWith(EXTENSION_PREFIX);
 
-  // From the content script in a web page: limited to these three.
+  // From the content script in a web page: limited to these five.
   if (!fromExtensionPage && sender.tab) {
     const pageUrl = sender.url ?? sender.tab.url;
     switch (message?.type) {
       case "kelsie-hello":
-        shouldShow(pageUrl).then((show) => sendResponse({ show }));
+        pageRules(pageUrl, sender.tab).then(sendResponse);
+        return true;
+      case "kelsie-page-text":
+        savePageNote(message, sender).then(sendResponse, () => sendResponse({ saved: false }));
+        return true;
+      case "kelsie-undo":
+        undoPageNote(sender).then(sendResponse, () => sendResponse({ undone: false }));
         return true;
       case "kelsie-hide":
         hideOn(pageUrl).then(() => sendResponse({ ok: true }));

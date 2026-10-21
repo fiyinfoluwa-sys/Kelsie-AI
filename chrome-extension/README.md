@@ -1,6 +1,6 @@
 # Kelsie for Chrome
 
-Version 1: connects to your Kelsie account and shows a small grey orb on the sites you allowed in Kelsie's Settings. No memory or deadline detection yet.
+Connects to your Kelsie account, shows a small grey orb on the sites you allowed in Kelsie's Settings, and saves short memory notes about pages you actually read.
 
 ## Install (Load unpacked)
 
@@ -25,4 +25,5 @@ Version 1: connects to your Kelsie account and shows a small grey orb on the sit
 - **Runs only where you said.** The orb's script is registered for allowed sites only, and removed from open tabs the moment a site is removed.
 - **Sees nothing on the page.** The orb lives in a closed Shadow DOM, reads no page content, and never touches form fields, passwords or payment details.
 - **No secrets in the extension.** It holds a random session token, stored by the background worker only. The website keeps just a hash of it, and checks it on every request.
+- **Memory notes, carefully.** After 30 seconds of real activity on an allowed page, Kelsie reads the page's main text (never form fields, editable areas or hidden text) and sends it to Kelsie's server, which writes one short note and throws the text away. Never on incognito, sign-in, checkout, banking or health-looking pages, or pages with password or payment fields, and never while memory is paused. Only a one-way hash of the page address leaves your browser.
 - **Disconnects for real.** Disconnecting, signing out on the website, or deleting your account revokes the token; the extension notices within a minute (instantly if a Kelsie page is open) and stops everywhere.

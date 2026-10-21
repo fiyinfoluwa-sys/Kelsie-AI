@@ -1,29 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState, useState } from "react";
+import Link from "next/link";
 import Orb from "./Orb";
 import SpeechBubble from "./SpeechBubble";
 import SplitScreen from "./SplitScreen";
 import { GoogleIcon } from "./icons";
+import { signIn, signInWithGoogle, signUp, type AuthFormState } from "@/app/auth/actions";
+import { PASSWORD_MAX, PASSWORD_MIN } from "@/lib/auth-messages";
 import styles from "./AuthPage.module.css";
 
 type Mode = "signup" | "signin";
 
 const COPY: Record<
   Mode,
-  { title: string; subtitle: string; submit: string; path: string }
+  { title: string; subtitle: string; submit: string; pending: string; path: string }
 > = {
   signup: {
     title: "Let's get you set up.",
     subtitle: "Make an account and Kelsie starts riding along in under a minute.",
     submit: "Create account",
+    pending: "Creating account…",
     path: "/signup",
   },
   signin: {
     title: "Welcome back.",
     subtitle: "Kelsie kept your spot. Sign in to pick up where you left off.",
     submit: "Sign in",
+    pending: "Signing in…",
     path: "/signin",
   },
 };
@@ -43,56 +47,34 @@ const STEPS = [
   },
 ];
 
-export default function AuthPage({ initialMode }: { initialMode: Mode }) {
-  const router = useRouter();
+type AuthPageProps = {
+  initialMode: Mode;
+  /** A message from a redirect, e.g. an expired email link. */
+  initialMessage?: string;
+};
+
+export default function AuthPage({ initialMode, initialMessage }: AuthPageProps) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [signUpState, signUpAction, signingUp] = useActionState<AuthFormState, FormData>(
+    signUp,
+    {},
+  );
+  const [signInState, signInAction, signingIn] = useActionState<AuthFormState, FormData>(
+    signIn,
+    {},
+  );
+  const [message, setMessage] = useState(initialMessage);
+
   const copy = COPY[mode];
+  const state = mode === "signup" ? signUpState : signInState;
+  const pending = mode === "signup" ? signingUp : signingIn;
 
   function switchMode(next: Mode) {
     setMode(next);
-    setNotice(null);
+    setMessage(undefined);
     // Keep the URL shareable without a full page navigation.
     window.history.replaceState(null, "", COPY[next].path);
-  }
-
-  // Real accounts aren't wired up yet: sign-up goes straight to
-  // onboarding, and sign-in explains that it's a preview.
-  function continueWithGoogle() {
-    if (mode === "signup") {
-      router.push("/onboarding");
-    } else {
-      showPreviewNotice();
-    }
-  }
-
-  function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const email = form.elements.namedItem("email") as HTMLInputElement;
-    const password = form.elements.namedItem("password") as HTMLInputElement;
-
-    if (!email.validity.valid) {
-      setNotice("That email doesn't look quite right.");
-      email.focus();
-      return;
-    }
-    if (!password.validity.valid) {
-      setNotice("Passwords need at least 8 characters.");
-      password.focus();
-      return;
-    }
-
-    if (mode === "signup") {
-      router.push("/onboarding");
-    } else {
-      showPreviewNotice();
-    }
-  }
-
-  function showPreviewNotice() {
-    setNotice("Sign-in isn't hooked up yet. This page is a preview for now.");
   }
 
   const panel = (
@@ -118,6 +100,28 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
     </>
   );
 
+  // After sign-up: same screen whether or not the email already had an
+  // account, so it can't be used to check who's registered.
+  if (mode === "signup" && signUpState.sentTo) {
+    return (
+      <SplitScreen panel={panel} panelLabel="How setup works">
+        <h1 className={styles.title}>Check your inbox.</h1>
+        <p className={styles.subtitle}>
+          We sent a link to <strong>{signUpState.sentTo}</strong>. Open it to verify your
+          email and finish setting up. It can take a minute to arrive.
+        </p>
+        <p className={styles.subtitle}>
+          Already have an account?{" "}
+          <button type="button" className={styles.inlineLink} onClick={() => switchMode("signin")}>
+            Sign in instead
+          </button>
+        </p>
+      </SplitScreen>
+    );
+  }
+
+  const error = state.error ?? message;
+
   return (
     <SplitScreen panel={panel} panelLabel="How setup works">
       <div className={styles.toggle} role="group" aria-label="Account">
@@ -140,20 +144,22 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
       <h1 className={styles.title}>{copy.title}</h1>
       <p className={styles.subtitle}>{copy.subtitle}</p>
 
-      <button
-        type="button"
-        className={`btn ${styles.google}`}
-        onClick={continueWithGoogle}
-      >
-        <GoogleIcon />
-        Continue with Google
-      </button>
+      <form action={signInWithGoogle}>
+        <button type="submit" className={`btn ${styles.google}`}>
+          <GoogleIcon />
+          Continue with Google
+        </button>
+      </form>
 
       <div className={styles.divider}>
         <span>or use email</span>
       </div>
 
-      <form className={styles.form} onSubmit={submit} noValidate>
+      <form
+        key={mode}
+        className={styles.form}
+        action={mode === "signup" ? signUpAction : signInAction}
+      >
         <label className={styles.field}>
           <span>Email</span>
           <input
@@ -161,6 +167,7 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
             name="email"
             autoComplete="email"
             placeholder="you@school.edu"
+            maxLength={254}
             required
           />
         </label>
@@ -169,26 +176,21 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
           <span className={styles.labelRow}>
             Password
             {mode === "signin" && (
-              <button
-                type="button"
-                className={styles.forgot}
-                onClick={showPreviewNotice}
-              >
+              <Link href="/forgot-password" className={styles.forgot}>
                 Forgot it?
-              </button>
+              </Link>
             )}
           </span>
           <span className={styles.passwordWrap}>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
-              autoComplete={
-                mode === "signup" ? "new-password" : "current-password"
-              }
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
               placeholder={
-                mode === "signup" ? "At least 8 characters" : "Your password"
+                mode === "signup" ? `At least ${PASSWORD_MIN} characters` : "Your password"
               }
-              minLength={8}
+              minLength={mode === "signup" ? PASSWORD_MIN : undefined}
+              maxLength={PASSWORD_MAX}
               required
             />
             <button
@@ -202,12 +204,16 @@ export default function AuthPage({ initialMode }: { initialMode: Mode }) {
           </span>
         </label>
 
-        <button type="submit" className={`btn btn-primary ${styles.submit}`}>
-          {copy.submit}
+        <button
+          type="submit"
+          className={`btn btn-primary ${styles.submit}`}
+          disabled={pending}
+        >
+          {pending ? copy.pending : copy.submit}
         </button>
 
-        <p className={styles.notice} role="status">
-          {notice}
+        <p className={styles.error} role="alert">
+          {error}
         </p>
       </form>
 

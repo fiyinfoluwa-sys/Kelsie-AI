@@ -282,6 +282,15 @@
   padding-left: 18px;
 }
 
+.error {
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #fdecec;
+  color: #a3261f;
+  font-size: 14px;
+}
+
 /* Back / Continue */
 
 .nav {

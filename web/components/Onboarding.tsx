@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import Link from "next/link";
 import Orb from "./Orb";
 import SpeechBubble from "./SpeechBubble";
 import SplitScreen from "./SplitScreen";
 import { CheckIcon } from "./icons";
+import { saveOnboarding } from "@/app/onboarding/actions";
 import {
+  NAME_MAX_LENGTH,
   ROLES,
   SITES,
   VIBES,
   displayName,
-  loadAnswers,
-  saveAnswers,
   toggleRole,
   vibeFarewell,
   vibeSample,
@@ -28,6 +29,8 @@ import styles from "./Onboarding.module.css";
 
 const TOTAL_STEPS = 5;
 const DONE = 6;
+// Where answers were kept before accounts existed. Cleared on load.
+const LEGACY_STORAGE_KEY = "kelsie.onboarding";
 
 const STEP_COPY: Record<number, { title: string; subtitle: string }> = {
   1: {
@@ -105,90 +108,99 @@ function kelsieMessage(step: number, answers: OnboardingAnswers): string {
   }
 }
 
-export default function Onboarding() {
-  const [answers, setAnswers] = useState<OnboardingAnswers | null>(null);
-  const [step, setStep] = useState(1);
+type OnboardingProps = {
+  initialAnswers: OnboardingAnswers;
+  /** True when this user already finished: open on the summary. */
+  completed: boolean;
+};
+
+export default function Onboarding({ initialAnswers, completed }: OnboardingProps) {
+  const [answers, setAnswers] = useState<OnboardingAnswers>(initialAnswers);
+  const [step, setStep] = useState(completed ? DONE : 1);
   const [now, setNow] = useState(() => new Date());
   const [notice, setNotice] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saving, startSaving] = useTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
 
-  // Saved answers and the timezone only exist in the browser, so load them
-  // after the first render instead of during server rendering.
+  // The timezone can only be detected in the browser.
   useEffect(() => {
-    const saved = loadAnswers();
-    setAnswers({ ...saved, timezone: saved.timezone || detectTimezone() });
-    if (saved.completedAt) setStep(DONE);
-  }, []);
-
-  useEffect(() => {
-    if (answers) saveAnswers(answers);
-  }, [answers]);
+    if (!initialAnswers.timezone) {
+      setAnswers((current) => ({ ...current, timezone: detectTimezone() }));
+    }
+    // Answers now live in the account, not the browser: remove any copy
+    // left over from before sign-in existed.
+    try {
+      window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+    } catch {
+      // Storage may be blocked; nothing to clean up then.
+    }
+  }, [initialAnswers.timezone]);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(id);
   }, []);
 
-  const ready = answers !== null;
-
   // Move focus to the new heading so keyboard and screen reader users
   // land on the next question.
   useEffect(() => {
-    if (!ready) return;
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
     headingRef.current?.focus();
-  }, [step, ready]);
+  }, [step]);
 
-  // Built once: the list of zones never changes, and the detected zone
-  // only needs to be included if the browser's list is missing it.
-  const initialZone = answers?.timezone ?? "";
-  const zoneGroups = useMemo(
-    () => (ready ? timezoneGroups(initialZone) : []),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ready],
+  // The list of zones never changes; build it once.
+  const [zoneGroups] = useState(() =>
+    timezoneGroups(initialAnswers.timezone || detectTimezone()),
   );
-
-  if (!answers) {
-    return (
-      <SplitScreen panel={<Orb size={180} />} panelLabel="Kelsie" align="top">
-        {null}
-      </SplitScreen>
-    );
-  }
 
   const name = displayName(answers);
 
   function update(changes: Partial<OnboardingAnswers>) {
-    setAnswers((current) => (current ? { ...current, ...changes } : current));
+    setAnswers((current) => ({ ...current, ...changes }));
   }
 
   function goTo(next: number) {
     setNotice(null);
+    setSaveError(null);
     setStep(next);
     window.scrollTo({ top: 0 });
-  }
-
-  function next(event: React.FormEvent) {
-    event.preventDefault();
-    if (!canContinue) return;
-    if (step === TOTAL_STEPS) {
-      update({ completedAt: new Date().toISOString() });
-      goTo(DONE);
-    } else {
-      goTo(step + 1);
-    }
   }
 
   const canContinue =
     (step !== 2 || answers.roles.length > 0) &&
     (step !== 4 || answers.vibe !== null);
 
+  function next(event: React.FormEvent) {
+    event.preventDefault();
+    if (!canContinue || saving) return;
+    if (step < TOTAL_STEPS) {
+      goTo(step + 1);
+      return;
+    }
+    setSaveError(null);
+    startSaving(async () => {
+      const result = await saveOnboarding(answers);
+      if (result.ok) {
+        goTo(DONE);
+      } else {
+        setSaveError(result.error);
+      }
+    });
+  }
+
   const continueLabel =
-    step === 3 ? "Yes, that's right" : step === TOTAL_STEPS ? "Finish setup" : "Continue";
+    step === 3
+      ? "Yes, that's right"
+      : step === TOTAL_STEPS
+        ? saving
+          ? "Saving…"
+          : "Finish setup"
+        : "Continue";
 
   const header =
     step === DONE ? (
@@ -232,13 +244,9 @@ export default function Onboarding() {
           >
             Add Kelsie to Chrome
           </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => setNotice("Your profile page is coming next.")}
-          >
+          <Link href="/profile" className="btn btn-secondary">
             Go to my profile
-          </button>
+          </Link>
         </div>
         <p className={styles.notice} role="status">
           {notice}
@@ -285,7 +293,7 @@ export default function Onboarding() {
               name="name"
               autoComplete="given-name"
               placeholder="Your name"
-              maxLength={40}
+              maxLength={NAME_MAX_LENGTH}
               value={answers.name}
               onChange={(e) => update({ name: e.target.value })}
               autoFocus
@@ -347,7 +355,7 @@ export default function Onboarding() {
 
         {step === 4 && (
           <fieldset className={`${styles.cards} ${styles.cardsStacked}`}>
-            <legend className="visually-hidden">Kelsie's vibe</legend>
+            <legend className="visually-hidden">Kelsie&apos;s vibe</legend>
             {VIBES.map((vibe) => (
               <label key={vibe.id} className={styles.card}>
                 <input
@@ -397,6 +405,12 @@ export default function Onboarding() {
           </>
         )}
 
+        {saveError && (
+          <p className={styles.error} role="alert">
+            {saveError}
+          </p>
+        )}
+
         <div className={styles.nav}>
           {step > 1 && (
             <button type="button" className="btn btn-secondary" onClick={() => goTo(step - 1)}>
@@ -406,7 +420,7 @@ export default function Onboarding() {
           <button
             type="submit"
             className={`btn btn-primary ${styles.continue}`}
-            disabled={!canContinue}
+            disabled={!canContinue || saving}
           >
             {continueLabel}
           </button>

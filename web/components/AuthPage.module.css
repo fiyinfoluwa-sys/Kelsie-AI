@@ -155,11 +155,24 @@
   margin-top: 6px;
 }
 
-.notice {
+.error {
   min-height: 1.6em;
   font-size: 14px;
-  color: var(--violet);
+  color: #a3261f;
   text-align: center;
+}
+
+.inlineLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 600;
+  color: var(--violet);
+  cursor: pointer;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
 }
 
 .switch {
@@ -178,6 +191,13 @@
   cursor: pointer;
 }
 
+.switch a {
+  font-weight: 600;
+  color: var(--violet);
+  text-decoration: none;
+}
+
+.switch a:hover,
 .switch button:hover {
   text-decoration: underline;
 }

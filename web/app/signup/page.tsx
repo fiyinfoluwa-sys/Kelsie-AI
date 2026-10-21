@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AuthPage from "@/components/AuthPage";
 import { redirectMessage } from "@/lib/auth-redirect-messages";
+import { googleSignInEnabled } from "@/lib/features";
 
 export const metadata: Metadata = {
   title: "Sign up — Kelsie",
@@ -11,5 +12,11 @@ export default async function SignUpPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  return <AuthPage initialMode="signup" initialMessage={redirectMessage(await searchParams)} />;
+  return (
+    <AuthPage
+      initialMode="signup"
+      initialMessage={redirectMessage(await searchParams)}
+      googleEnabled={googleSignInEnabled()}
+    />
+  );
 }

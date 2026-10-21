@@ -51,9 +51,10 @@ type AuthPageProps = {
   initialMode: Mode;
   /** A message from a redirect, e.g. an expired email link. */
   initialMessage?: string;
+  googleEnabled: boolean;
 };
 
-export default function AuthPage({ initialMode, initialMessage }: AuthPageProps) {
+export default function AuthPage({ initialMode, initialMessage, googleEnabled }: AuthPageProps) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [signUpState, signUpAction, signingUp] = useActionState<AuthFormState, FormData>(
@@ -92,7 +93,9 @@ export default function AuthPage({ initialMode, initialMessage }: AuthPageProps)
             <span className={styles.stepNumber}>{index + 1}</span>
             <div>
               <h2 className={styles.stepTitle}>{step.title}</h2>
-              <p className={styles.stepBody}>{step.body}</p>
+              <p className={styles.stepBody}>
+                {index === 0 && !googleEnabled ? "Just an email and a password." : step.body}
+              </p>
             </div>
           </li>
         ))}
@@ -144,16 +147,20 @@ export default function AuthPage({ initialMode, initialMessage }: AuthPageProps)
       <h1 className={styles.title}>{copy.title}</h1>
       <p className={styles.subtitle}>{copy.subtitle}</p>
 
-      <form action={signInWithGoogle}>
-        <button type="submit" className={`btn ${styles.google}`}>
-          <GoogleIcon />
-          Continue with Google
-        </button>
-      </form>
+      {googleEnabled && (
+        <>
+          <form action={signInWithGoogle}>
+            <button type="submit" className={`btn ${styles.google}`}>
+              <GoogleIcon />
+              Continue with Google
+            </button>
+          </form>
 
-      <div className={styles.divider}>
-        <span>or use email</span>
-      </div>
+          <div className={styles.divider}>
+            <span>or use email</span>
+          </div>
+        </>
+      )}
 
       <form
         key={mode}

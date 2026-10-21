@@ -14,6 +14,7 @@ import {
   passwordProblem,
   signInMessage,
 } from "@/lib/auth-messages";
+import { googleSignInEnabled } from "@/lib/features";
 import { cameFromResetLink, homeFor } from "@/lib/session";
 import { siteOrigin } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
@@ -70,6 +71,7 @@ export async function signIn(_prev: AuthFormState, form: FormData): Promise<Auth
 }
 
 export async function signInWithGoogle(): Promise<void> {
+  if (!googleSignInEnabled()) redirect("/signin");
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",

@@ -70,6 +70,7 @@ Open <http://localhost:3000>.
    - Authorized JavaScript origins: `http://localhost:3000`, `https://kelsie-ai-beta.vercel.app`
    - Authorized redirect URI: `https://<your-project-ref>.supabase.co/auth/v1/callback`. Supabase shows the exact URL under **Authentication → Sign In / Providers → Google**.
 4. Paste the client ID and secret into **Supabase → Authentication → Sign In / Providers → Google**, and enable it. The Google secret stays in Supabase; the app never sees it.
+5. Set `GOOGLE_SIGN_IN=on` in `web/.env.local` and in Vercel to show the "Continue with Google" button. While it's off, the button is hidden and the server refuses Google sign-in.
 
 ### 3. Vercel
 

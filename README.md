@@ -1,6 +1,6 @@
 # Kelsie AI 🤖
 
-[Kelsie] (https://kelsie-ai-beta.vercel.app/) is an ambient AI assistant designed to help you keep track of the things that matter without constantly organizing, saving, or re-explaining them.
+[Kelsie](https://kelsie-ai-beta.vercel.app/) is an ambient AI assistant designed to help you keep track of the things that matter without constantly organizing, saving, or re-explaining them.
 
 The idea is simple: you mention something to Kelsie, she remembers why it mattered, and brings it back when it becomes useful.
 

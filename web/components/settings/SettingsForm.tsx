@@ -29,6 +29,7 @@ type Section = "about" | "vibe" | "sites" | "memory";
 type SettingsFormProps = {
   initial: OnboardingAnswers;
   memoryEnabled: boolean;
+  helpImprove: boolean;
   memoryCount: number;
   email: string;
   provider: "email" | "google";
@@ -37,6 +38,7 @@ type SettingsFormProps = {
 export default function SettingsForm({
   initial,
   memoryEnabled: initialMemory,
+  helpImprove: initialHelpImprove,
   memoryCount: initialMemoryCount,
   email,
   provider,
@@ -47,6 +49,7 @@ export default function SettingsForm({
   const [vibe, setVibe] = useState<Vibe | null>(initial.vibe);
   const [sites, setSites] = useState<Record<SiteId, boolean>>(initial.sites);
   const [memoryEnabled, setMemoryEnabled] = useState(initialMemory);
+  const [helpImprove, setHelpImprove] = useState(initialHelpImprove);
   const [memoryCount, setMemoryCount] = useState(initialMemoryCount);
   const [status, setStatus] = useState<Record<Section, Status>>({
     about: { state: "idle" },
@@ -132,6 +135,11 @@ export default function SettingsForm({
   function changeMemory(enabled: boolean) {
     setMemoryEnabled(enabled);
     void save("memory", { memoryEnabled: enabled }).then((ok) => !ok && setMemoryEnabled(!enabled));
+  }
+
+  function changeHelpImprove(enabled: boolean) {
+    setHelpImprove(enabled);
+    void save("memory", { helpImprove: enabled }).then((ok) => !ok && setHelpImprove(!enabled));
   }
 
   const kelsieName = displayName({ name });
@@ -238,6 +246,8 @@ export default function SettingsForm({
 
       {/* Memory and privacy */}
       <MemorySection
+        helpImprove={helpImprove}
+        onHelpImproveChange={changeHelpImprove}
         enabled={memoryEnabled}
         onChange={changeMemory}
         status={status.memory}
@@ -277,6 +287,8 @@ function SectionHead({ id, title, status }: { id: string; title: string; status:
 }
 
 function MemorySection({
+  helpImprove,
+  onHelpImproveChange,
   enabled,
   onChange,
   status,
@@ -288,6 +300,8 @@ function MemorySection({
   status: Status;
   memoryCount: number;
   onCleared: () => void;
+  helpImprove: boolean;
+  onHelpImproveChange: (enabled: boolean) => void;
 }) {
   const [confirming, setConfirming] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -326,6 +340,29 @@ function MemorySection({
           aria-labelledby="memory-switch-label"
           className={styles.switch}
           onClick={() => onChange(!enabled)}
+        >
+          <span className={styles.knob} />
+        </button>
+      </div>
+
+      <div className={styles.row}>
+        <div>
+          <p className={styles.rowTitle} id="help-improve-label">
+            Help improve Kelsie
+          </p>
+          <p className={styles.muted}>
+            For testers. Keeps what you type to Kelsie (with emails, numbers and links blanked
+            out) so it can learn to understand you better. Off by default. Turning it off deletes
+            everything it kept.
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={helpImprove}
+          aria-labelledby="help-improve-label"
+          className={styles.switch}
+          onClick={() => onHelpImproveChange(!helpImprove)}
         >
           <span className={styles.knob} />
         </button>

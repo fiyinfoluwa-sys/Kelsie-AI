@@ -32,7 +32,7 @@ function refresh() {
  * Saves one or more settings. Only these keys are accepted; anything else
  * (like an attempt to set another user's ID) is rejected.
  */
-const SETTING_KEYS = new Set(["name", "roles", "timezone", "vibe", "sites", "memoryEnabled"]);
+const SETTING_KEYS = new Set(["name", "roles", "timezone", "vibe", "sites", "memoryEnabled", "helpImprove"]);
 
 export async function updateSettings(changes: unknown): Promise<ActionResult> {
   if (typeof changes !== "object" || changes === null || Array.isArray(changes)) {
@@ -74,10 +74,20 @@ export async function updateSettings(changes: unknown): Promise<ActionResult> {
     if (typeof input.memoryEnabled !== "boolean") return { ok: false, error: TRY_AGAIN };
     update.memory_enabled = input.memoryEnabled;
   }
+  if ("helpImprove" in input) {
+    if (typeof input.helpImprove !== "boolean") return { ok: false, error: TRY_AGAIN };
+    update.help_improve = input.helpImprove;
+  }
 
   const { supabase, user } = await requireUser();
   const { error } = await supabase.from("profiles").update(update).eq("id", user.id);
   if (error) return { ok: false, error: TRY_AGAIN };
+
+  // Opting out of "Help improve Kelsie" also deletes what it collected.
+  if (update.help_improve === false) {
+    const { error: deleteError } = await supabase.from("router_training_examples").delete().eq("user_id", user.id);
+    if (deleteError) return { ok: false, error: TRY_AGAIN };
+  }
 
   refresh();
   return { ok: true };

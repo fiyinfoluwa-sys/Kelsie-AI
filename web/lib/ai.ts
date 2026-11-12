@@ -20,16 +20,26 @@ export type AiResult =
   | { ok: true; text: string }
   | { ok: false; reason: "not_configured" | "rate_limited" | "error" };
 
+type Prompt = { system: string; user: string; maxTokens: number };
+
 /**
  * Asks the model for a JSON object. Returns the raw JSON text; callers
  * must validate it. Never retries: if the provider is busy or over its
  * limit, the caller just skips.
  */
-export async function completeJson(options: {
-  system: string;
-  user: string;
-  maxTokens: number;
-}): Promise<AiResult> {
+export function completeJson(options: Prompt): Promise<AiResult> {
+  return complete(options, { temperature: 0.2, json: true });
+}
+
+/** Asks the model for a short plain-text reply. Same rules: no retries, no logging. */
+export function completeText(options: Prompt): Promise<AiResult> {
+  return complete(options, { temperature: 0.5, json: false });
+}
+
+async function complete(
+  options: Prompt,
+  { temperature, json }: { temperature: number; json: boolean },
+): Promise<AiResult> {
   const key = process.env.GROQ_API_KEY;
   if (!key) return { ok: false, reason: "not_configured" };
 
@@ -45,9 +55,9 @@ export async function completeJson(options: {
           { role: "system", content: options.system },
           { role: "user", content: options.user },
         ],
-        temperature: 0.2,
+        temperature,
         max_tokens: options.maxTokens,
-        response_format: { type: "json_object" },
+        ...(json ? { response_format: { type: "json_object" } } : {}),
       }),
       signal: controller.signal,
       cache: "no-store",

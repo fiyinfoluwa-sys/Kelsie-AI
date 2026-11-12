@@ -16,9 +16,10 @@ export default async function SettingsPage() {
   if (!profile?.onboarding_completed_at) redirect("/onboarding");
 
   // Counts only (no rows): for the nav and the "Clear all memories" prompt.
-  const [applications, memories] = await Promise.all([
+  const [applications, memories, flags] = await Promise.all([
     supabase.from("applications").select("id", { count: "exact", head: true }).eq("user_id", user.id),
     supabase.from("memories").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+    supabase.from("profiles").select("help_improve").eq("id", user.id).maybeSingle(),
   ]);
 
   const answers = rowToAnswers(profile);
@@ -34,6 +35,7 @@ export default async function SettingsPage() {
       <SettingsForm
         initial={answers}
         memoryEnabled={profile.memory_enabled}
+        helpImprove={flags.data?.help_improve === true}
         memoryCount={memories.count ?? 0}
         email={user.email ?? ""}
         provider={provider}

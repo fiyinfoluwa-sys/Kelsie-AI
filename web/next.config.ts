@@ -15,9 +15,24 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
 ];
 
+// Files the intent router reads at runtime, which Vercel must ship with the
+// functions that use it (they're loaded from disk, not imported).
+const ROUTER_FILES = [
+  "./intent-router/intent_int8.onnx",
+  "./intent-router/router_config.json",
+  "./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm",
+  "./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs",
+];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // ONNX Runtime loads its WebAssembly from node_modules; don't bundle it.
+  serverExternalPackages: ["onnxruntime-web"],
+  outputFileTracingIncludes: {
+    "/api/kelsie/message": ROUTER_FILES,
+    "/api/kelsie/router-health": ROUTER_FILES,
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

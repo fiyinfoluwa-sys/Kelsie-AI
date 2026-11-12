@@ -15,11 +15,11 @@ export async function GET() {
   const user = auth?.user;
   if (!user) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
 
-  const [profile, memories, deadlines, applications] = await Promise.all([
+  const [profile, memories, deadlines, applications, focusSessions, examples] = await Promise.all([
     supabase
       .from("profiles")
       .select(
-        "name, roles, timezone, vibe, allowed_sites, memory_enabled, onboarding_completed_at, extension_connected_at, created_at, updated_at",
+        "name, roles, timezone, vibe, allowed_sites, memory_enabled, help_improve, onboarding_completed_at, extension_connected_at, created_at, updated_at",
       )
       .eq("id", user.id)
       .maybeSingle(),
@@ -38,9 +38,19 @@ export async function GET() {
       .select("company, role, status, applied_on, created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
+      supabase
+      .from("focus_sessions")
+      .select("started_at, ends_at, ended_at")
+      .eq("user_id", user.id)
+      .order("started_at", { ascending: false }),
+    supabase
+      .from("router_training_examples")
+      .select("text, predicted, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
   ]);
 
-  if (profile.error || memories.error || deadlines.error || applications.error) {
+  if (profile.error || memories.error || deadlines.error || applications.error || focusSessions.error || examples.error) {
     return NextResponse.json({ error: "Couldn't export your data. Try again." }, { status: 500 });
   }
 
@@ -55,6 +65,8 @@ export async function GET() {
     memories: memories.data,
     deadlines: deadlines.data,
     applications: applications.data,
+    focus_sessions: focusSessions.data,
+    help_improve_examples: examples.data,
   };
 
   const date = new Date().toISOString().slice(0, 10);

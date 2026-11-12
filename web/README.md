@@ -37,7 +37,7 @@ Open <http://localhost:3000>.
 ### 1. Supabase project
 
 1. Create a project at <https://supabase.com/dashboard> (Free plan). Save the database password in a password manager.
-2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same, in order, with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql), [`0003_memories_deadlines_applications.sql`](supabase/migrations/0003_memories_deadlines_applications.sql) [`0004_extension_sessions.sql`](supabase/migrations/0004_extension_sessions.sql) and [`0005_memory_capture.sql`](supabase/migrations/0005_memory_capture.sql).
+2. **SQL Editor → New query**: paste all of [`supabase/migrations/0001_profiles.sql`](supabase/migrations/0001_profiles.sql) and click **Run**. Then do the same, in order, with [`0002_profiles_grants.sql`](supabase/migrations/0002_profiles_grants.sql), [`0003_memories_deadlines_applications.sql`](supabase/migrations/0003_memories_deadlines_applications.sql) [`0004_extension_sessions.sql`](supabase/migrations/0004_extension_sessions.sql) [`0005_memory_capture.sql`](supabase/migrations/0005_memory_capture.sql) and [`0006_kelsie_messages.sql`](supabase/migrations/0006_kelsie_messages.sql).
    - Optional, for your own test account only: [`supabase/seed/sample_data.sql`](supabase/seed/sample_data.sql) adds sample memories, deadlines and applications. Replace `YOUR_EMAIL_HERE` in the SQL Editor before running it, and don't commit your email.
 3. **Authentication → Sign In / Providers → Email**: keep **Confirm email** on and set **Minimum password length** to `8`.
 4. **Authentication → URL Configuration**:
@@ -88,6 +88,55 @@ Open <http://localhost:3000>.
 ### Before inviting real users
 
 Supabase's built-in email service is meant for testing: it sends very few emails per hour and may only deliver to your project's team members. Set up custom SMTP (for example Resend's free plan) under **Authentication → Emails → SMTP Settings**.
+
+## Messages to Kelsie (intent router)
+
+`POST /api/kelsie/message` with `{ "text": "..." }` (signed-in session) returns `{ reply, handler, intent, confirm? }`.
+
+Before any AI call, the intent router in [`intent-router/`](intent-router) (copied from `../../kelsie-intent`; model loaded once per server instance, ~120 ms, then ~0.3 ms a message) decides where the message goes:
+
+| Intent | Handler | AI? |
+|---|---|---|
+| `deadline_query` | Reads your confirmed deadlines | No |
+| `focus` | Starts, extends or ends a focus session | No |
+| `settings_privacy` | Rule-based: pause/resume memory and vibe change happen; deleting the account, clearing memories, removing or adding a site return a **confirm** step; unclear requests go to the AI for an explanation only | Only if unclear |
+| `smalltalk` | Canned reply in your vibe | No |
+| `remember` | Small call to write the note, then saves it | Small |
+| `deadline_add` | Small call to pull out title + date, returns a **confirm** step | Small |
+| `recall` | Searches your notes, then the AI answers from them | Yes (none if no match) |
+| `application`, `general`, or any low-confidence message | AI with an intent-specific prompt | Yes |
+
+- **Confirm steps** are carried out by `POST /api/kelsie/confirm` after the user says yes; it re-validates everything. Deleting the account can't be confirmed there: it stays behind Settings' type-DELETE step.
+- **AI limit:** 100 AI calls per user per day (on top of memory notes' 30), enforced in the database.
+- **Logs:** only intent, predicted intent, route, handler, confidence, whether it fell back, whether it used AI, and latency. No message text, no user ID.
+- **Help improve Kelsie** (Settings → Memory and privacy, off by default): saves message text (emails, numbers, links blanked out) + predicted intent in `router_training_examples`. Turning it off deletes them.
+- **Health check:** `GET /api/kelsie/router-health` → `{ ok: true, intent: "deadline_query" }` when the model loads.
+
+How many AI calls the router saves (Supabase SQL Editor):
+
+```sql
+select
+  count(*) as messages,
+  count(*) filter (where not used_ai) as handled_without_ai,
+  round(100.0 * count(*) filter (where not used_ai) / nullif(count(*), 0), 1) as pct_saved,
+  count(*) filter (where fell_back) as fell_back
+from router_events;
+
+-- By route
+select case when fell_back then 'fallback → llm' else route end as path, count(*)
+from router_events group by 1 order by 2 desc;
+```
+
+To retrain: run `./run_all.sh` in `kelsie-intent`, copy `js/tokenizer.js`, `js/router.js`, `artifacts/intent_int8.onnx` and `artifacts/router_config.json` into `intent-router/`, then run `python tests/test_tokenizer_parity.py` there and `npm test` here. Relabel opted-in examples with:
+
+```sql
+select id, text, predicted, confidence, fell_back from router_training_examples where correct_intent is null;
+-- update router_training_examples set correct_intent = 'focus' where id = '...';
+```
+
+## Tests
+
+`npm test` runs the message API tests: sample messages go through the real router (ONNX model + tokenizer) with fake Supabase and Groq, checking each lands on the right handler and that "delete my account" only returns a confirm step.
 
 ## Chrome extension
 

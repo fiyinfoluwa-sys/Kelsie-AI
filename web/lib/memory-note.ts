@@ -28,15 +28,19 @@ Rules:
 - No opinions, no advice, no emojis, no quotation marks around the note.
 - Reply with JSON only: {"note": "..."}`;
 
-/** Cleans page text before it goes anywhere: no control characters, no obvious personal numbers. */
-export function preparePageText(text: string): string {
+/** Blanks out emails, card/account numbers and phone numbers. */
+export function redactPersonal(text: string): string {
   return text
-    .replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, " ")
     .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[email]")
     // Runs of 12+ digits (with spaces or dashes): card or account numbers.
     .replace(/\b(?:\d[ -]?){12,19}\b/g, "[number]")
     // Phone-like runs with 10+ digits (dates like 2026-10-21 have 8 and stay).
-    .replace(/\+?\(?\d[\d ().-]{8,}\d/g, (run) => (run.replace(/\D/g, "").length >= 10 ? "[number]" : run))
+    .replace(/\+?\(?\d[\d ().-]{8,}\d/g, (run) => (run.replace(/\D/g, "").length >= 10 ? "[number]" : run));
+}
+
+/** Cleans page text before it goes anywhere: no control characters, no obvious personal numbers. */
+export function preparePageText(text: string): string {
+  return redactPersonal(text.replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, " "))
     .replace(/<\/?page>/gi, "")
     .replace(/[ \t]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")

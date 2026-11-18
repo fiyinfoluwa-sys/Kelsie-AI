@@ -11,18 +11,30 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Environment secrets
+# JavaScript builds and dependencies (any package in the repo)
+node_modules/
+.next/
+.output/
+.wxt/
+
+# Environment files hold keys: never commit them, in any folder. Only the
+# examples (placeholder values) are tracked.
 .env
 .env.*
+!.env.example
 
-# Local Kelsie data
-data/
+# Personal data and old scripts that must never be committed
+kelsie_memory.json
+kelsie_cli_transformers.py
+
+# The old Python app's local database (repo root only, so folders like
+# ml/kelsie-intent/data/ aren't caught by this)
+/data/
 *.db
 *.db-shm
 *.db-wal
 *.sqlite
 *.sqlite3
-backend/kelsie_memory.json
 
 # Local backup files
 *-before-reminders.py

@@ -1,0 +1,1182 @@
+{
+  "threshold": 0.68,
+  "temperature": 0.5948886275291443,
+  "test (held-out templates)": {
+    "n": 660,
+    "accuracy": 0.8045454545454546,
+    "macro_f1": 0.7986577376395393,
+    "per_intent": {
+      "remember": {
+        "precision": 0.9054054054054054,
+        "recall": 0.8375,
+        "f1-score": 0.8701298701298701,
+        "support": 80.0
+      },
+      "recall": {
+        "precision": 0.7669902912621359,
+        "recall": 0.9875,
+        "f1-score": 0.8633879781420765,
+        "support": 80.0
+      },
+      "deadline_add": {
+        "precision": 0.8717948717948718,
+        "recall": 0.9714285714285714,
+        "f1-score": 0.918918918918919,
+        "support": 70.0
+      },
+      "deadline_query": {
+        "precision": 0.68,
+        "recall": 0.7285714285714285,
+        "f1-score": 0.7034482758620689,
+        "support": 70.0
+      },
+      "focus": {
+        "precision": 0.7763157894736842,
+        "recall": 0.8428571428571429,
+        "f1-score": 0.8082191780821918,
+        "support": 70.0
+      },
+      "application": {
+        "precision": 0.9315068493150684,
+        "recall": 0.9714285714285714,
+        "f1-score": 0.951048951048951,
+        "support": 70.0
+      },
+      "settings_privacy": {
+        "precision": 0.6744186046511628,
+        "recall": 0.8285714285714286,
+        "f1-score": 0.7435897435897436,
+        "support": 70.0
+      },
+      "smalltalk": {
+        "precision": 0.9302325581395349,
+        "recall": 0.5714285714285714,
+        "f1-score": 0.7079646017699115,
+        "support": 70.0
+      },
+      "general": {
+        "precision": 0.7884615384615384,
+        "recall": 0.5125,
+        "f1-score": 0.6212121212121212,
+        "support": 80.0
+      },
+      "accuracy": 0.8045454545454546,
+      "macro avg": {
+        "precision": 0.8139028787226003,
+        "recall": 0.8057539682539683,
+        "f1-score": 0.7986577376395393,
+        "support": 660.0
+      },
+      "weighted avg": {
+        "precision": 0.8141930090098922,
+        "recall": 0.8045454545454546,
+        "f1-score": 0.7980328400117431,
+        "support": 660.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        67,
+        0,
+        0,
+        0,
+        1,
+        1,
+        11,
+        0,
+        0
+      ],
+      [
+        1,
+        79,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        68,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        10,
+        51,
+        1,
+        0,
+        0,
+        0,
+        8
+      ],
+      [
+        0,
+        9,
+        0,
+        0,
+        59,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        68,
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        8,
+        0,
+        0,
+        0,
+        0,
+        58,
+        3,
+        0
+      ],
+      [
+        3,
+        4,
+        0,
+        11,
+        5,
+        0,
+        5,
+        40,
+        2
+      ],
+      [
+        2,
+        3,
+        0,
+        10,
+        10,
+        4,
+        10,
+        0,
+        41
+      ]
+    ],
+    "routing": {
+      "coverage": 0.7893939393939394,
+      "accuracy_when_kept": 0.9001919385796545,
+      "fell_back_share": 0.2106060606060606,
+      "wrong_action_rate": 0.07727272727272727,
+      "end_to_end_ok": 0.9227272727272727
+    },
+    "errors": [
+      {
+        "text": "what's up please",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.981
+      },
+      {
+        "text": "hey kelsie see ya",
+        "label": "smalltalk",
+        "pred": "recall",
+        "conf": 0.537
+      },
+      {
+        "text": "hep me rply to tis email",
+        "label": "general",
+        "pred": "application",
+        "conf": 0.851
+      },
+      {
+        "text": "gvie me feedback on my thesis",
+        "label": "general",
+        "pred": "recall",
+        "conf": 0.892
+      },
+      {
+        "text": "WHICH DEADLINE IS CLOSEST",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.498
+      },
+      {
+        "text": "which deadline is closest",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.498
+      },
+      {
+        "text": "can you keep me on trcak whille i do the book report",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.339
+      },
+      {
+        "text": "Whaat's up",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.993
+      },
+      {
+        "text": "Which deadline is closest",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.498
+      },
+      {
+        "text": "How do i cte a website in apa",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.397
+      },
+      {
+        "text": "See ya lol",
+        "label": "smalltalk",
+        "pred": "focus",
+        "conf": 0.462
+      },
+      {
+        "text": "Give me feedback on my thesis",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.345
+      },
+      {
+        "text": "put finl project on my deadlines for nxt week pls",
+        "label": "deadline_add",
+        "pred": "deadline_query",
+        "conf": 0.748
+      },
+      {
+        "text": "can you keep me on track while i do the discussion post",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.522
+      },
+      {
+        "text": "wht's left to do",
+        "label": "deadline_query",
+        "pred": "focus",
+        "conf": 0.511
+      },
+      {
+        "text": "GN KELSIE",
+        "label": "smalltalk",
+        "pred": "settings_privacy",
+        "conf": 0.494
+      },
+      {
+        "text": "ok so what's up",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.92
+      },
+      {
+        "text": "gvie me feedback on my thesis rn",
+        "label": "general",
+        "pred": "recall",
+        "conf": 0.869
+      },
+      {
+        "text": "yo wat data do you have",
+        "label": "settings_privacy",
+        "pred": "smalltalk",
+        "conf": 0.781
+      },
+      {
+        "text": "how busy is my week",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.675
+      },
+      {
+        "text": "Can you keep me on tack while i do the lab report?",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.921
+      },
+      {
+        "text": "What's up please",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.981
+      },
+      {
+        "text": "gn kelsie!",
+        "label": "smalltalk",
+        "pred": "settings_privacy",
+        "conf": 0.494
+      },
+      {
+        "text": "i want to come bakc to this later",
+        "label": "remember",
+        "pred": "application",
+        "conf": 0.418
+      },
+      {
+        "text": "turn these notes into flashcards on recursion",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.992
+      },
+      {
+        "text": "hey kelsie gie me feedback on my thesis",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.306
+      },
+      {
+        "text": "What's the difference between infflation and inflation rn",
+        "label": "general",
+        "pred": "recall",
+        "conf": 0.403
+      },
+      {
+        "text": "give me feedback on my thesis",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.345
+      },
+      {
+        "text": "bookmark this in your memory",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.584
+      },
+      {
+        "text": "can you keep me on track while i do the budget shheet",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.849
+      },
+      {
+        "text": "delete evrything you remember",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.76
+      },
+      {
+        "text": "what''s up",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.997
+      },
+      {
+        "text": "How busy is my week!",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.675
+      },
+      {
+        "text": "ok so give me feedback on my thesis",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.468
+      },
+      {
+        "text": "clear my memories",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.376
+      },
+      {
+        "text": "wha's a good way to start a speech",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.851
+      },
+      {
+        "text": "Give me practice questions on blcak hloes",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.727
+      },
+      {
+        "text": "what's up pls",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.997
+      },
+      {
+        "text": "HELP ME REPPLY TO THIS EMAIL",
+        "label": "general",
+        "pred": "application",
+        "conf": 0.593
+      },
+      {
+        "text": "turn these notes ito flashcards on keynesian economics",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.877
+      },
+      {
+        "text": "Which dadline is closest",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.623
+      },
+      {
+        "text": "gn klesie",
+        "label": "smalltalk",
+        "pred": "general",
+        "conf": 0.453
+      },
+      {
+        "text": "yo how busy is my week",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.662
+      },
+      {
+        "text": "Check my deadlines for psych lol",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.705
+      },
+      {
+        "text": "can you keep me on tack while i do the econ essay",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.853
+      },
+      {
+        "text": "gn kelsie",
+        "label": "smalltalk",
+        "pred": "settings_privacy",
+        "conf": 0.494
+      },
+      {
+        "text": "bookmark tis in your memory",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.806
+      },
+      {
+        "text": "turn these notes innto flahcards on machhine learning",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.902
+      },
+      {
+        "text": "see ya thx",
+        "label": "smalltalk",
+        "pred": "focus",
+        "conf": 0.554
+      },
+      {
+        "text": "what's up",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.997
+      },
+      {
+        "text": "Give me feedback on my thesis!",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.345
+      },
+      {
+        "text": "ok so BOOKMARK TIS IN YOUUR MEMORY",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.736
+      },
+      {
+        "text": "how busy is my week lol",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.408
+      },
+      {
+        "text": "trn these notes into flashcarrds on how mortgages work",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.426
+      },
+      {
+        "text": "see ya rn",
+        "label": "smalltalk",
+        "pred": "focus",
+        "conf": 0.817
+      },
+      {
+        "text": "ok so what daa do you have",
+        "label": "settings_privacy",
+        "pred": "smalltalk",
+        "conf": 0.671
+      },
+      {
+        "text": "ok so see ya",
+        "label": "smalltalk",
+        "pred": "focus",
+        "conf": 0.492
+      },
+      {
+        "text": "Gn kelsie",
+        "label": "smalltalk",
+        "pred": "settings_privacy",
+        "conf": 0.494
+      },
+      {
+        "text": "clear my memories?",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.376
+      },
+      {
+        "text": "check my dealines for history",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.958
+      },
+      {
+        "text": "see ya asap",
+        "label": "smalltalk",
+        "pred": "focus",
+        "conf": 0.493
+      },
+      {
+        "text": "yo Can you keep me on track while i do the book report asap",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.728
+      },
+      {
+        "text": "gn keslie?",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.392
+      },
+      {
+        "text": "yo what's up",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.995
+      },
+      {
+        "text": "hey kelsie bookmmark this in your memory",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.393
+      },
+      {
+        "text": "later kelsie",
+        "label": "smalltalk",
+        "pred": "remember",
+        "conf": 0.314
+      },
+      {
+        "text": "laer kelsie",
+        "label": "smalltalk",
+        "pred": "general",
+        "conf": 0.634
+      },
+      {
+        "text": "bookmark ths in your memory asap",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.416
+      },
+      {
+        "text": "kelsie whats up",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.992
+      },
+      {
+        "text": "i want to come back to tihs later pls",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.522
+      },
+      {
+        "text": "what's a god way to start a spech",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.961
+      },
+      {
+        "text": "fill out the Sohpify form for me",
+        "label": "application",
+        "pred": "settings_privacy",
+        "conf": 0.527
+      },
+      {
+        "text": "give me feedback on my thesiis rn",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.458
+      },
+      {
+        "text": "put budget seet on my deadlines for next wek",
+        "label": "deadline_add",
+        "pred": "deadline_query",
+        "conf": 0.716
+      },
+      {
+        "text": "WHAT'S A GOOD WAY TO START A SPEECH",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.879
+      },
+      {
+        "text": "see ya",
+        "label": "smalltalk",
+        "pred": "recall",
+        "conf": 0.64
+      },
+      {
+        "text": "yo what's a good way to start a speech",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.882
+      },
+      {
+        "text": "ok so whta data do you have",
+        "label": "settings_privacy",
+        "pred": "smalltalk",
+        "conf": 0.969
+      },
+      {
+        "text": "waht's up",
+        "label": "smalltalk",
+        "pred": "deadline_query",
+        "conf": 0.853
+      },
+      {
+        "text": "GIVE ME FEEDBACK ON MY THEIS",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.359
+      },
+      {
+        "text": "ok so delete everythiing you remember",
+        "label": "settings_privacy",
+        "pred": "remember",
+        "conf": 0.585
+      },
+      {
+        "text": "kelsie see ya",
+        "label": "smalltalk",
+        "pred": "recall",
+        "conf": 0.614
+      },
+      {
+        "text": "Clear my memories",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.376
+      },
+      {
+        "text": "turn these notes into flashcadrs on recursion lol",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.925
+      },
+      {
+        "text": "Turn these notes into flashcards on inflation",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.914
+      },
+      {
+        "text": "turn these notes into flashacrds on the french revolution",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.848
+      },
+      {
+        "text": "which dadline is closest",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.623
+      },
+      {
+        "text": "kelsie what's the diference between keyneian economics and keyneesian economics",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.422
+      },
+      {
+        "text": "what's a good way to start a speech",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.879
+      },
+      {
+        "text": "help me repyl to this email",
+        "label": "general",
+        "pred": "remember",
+        "conf": 0.371
+      },
+      {
+        "text": "kelsie how busy is my week",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.721
+      },
+      {
+        "text": "yo bookmark this in your memory",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.535
+      },
+      {
+        "text": "give me practice qestions on the krebs cycle",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.693
+      },
+      {
+        "text": "bookmark this in your memory asap",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.375
+      },
+      {
+        "text": "ok so how busy is my week",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.401
+      },
+      {
+        "text": "clear my mmories",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.877
+      },
+      {
+        "text": "what was the name of my landlord's number again pls",
+        "label": "recall",
+        "pred": "remember",
+        "conf": 0.838
+      },
+      {
+        "text": "can you keep me on trakc while i do the case study",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.481
+      },
+      {
+        "text": "clear my meemories please",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.559
+      },
+      {
+        "text": "wht's a good way to start a speech asap",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.947
+      },
+      {
+        "text": "ok so can you keep me on track while i do the budget sheet",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.596
+      },
+      {
+        "text": "give me feedback on my thesis?",
+        "label": "general",
+        "pred": "deadline_query",
+        "conf": 0.345
+      },
+      {
+        "text": "how bussy is my week",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.491
+      },
+      {
+        "text": "kelsie turn tehse notes into flashcards on rceursion",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.994
+      },
+      {
+        "text": "turn these notes into flashcards on the krebs cycle",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.869
+      },
+      {
+        "text": "which deadline is closest please",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.683
+      },
+      {
+        "text": "yo help me concentrate for an hur",
+        "label": "focus",
+        "pred": "general",
+        "conf": 0.476
+      },
+      {
+        "text": "ok so help me reply to thsi email",
+        "label": "general",
+        "pred": "remember",
+        "conf": 0.354
+      },
+      {
+        "text": "kelsie what's a good way to start a speeech rn",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.818
+      },
+      {
+        "text": "gn kelsie thx",
+        "label": "smalltalk",
+        "pred": "settings_privacy",
+        "conf": 0.37
+      },
+      {
+        "text": "clear my meemories",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.517
+      },
+      {
+        "text": "Later kelsie",
+        "label": "smalltalk",
+        "pred": "remember",
+        "conf": 0.314
+      },
+      {
+        "text": "hepl me concentrate for 25 minutes",
+        "label": "focus",
+        "pred": "settings_privacy",
+        "conf": 0.533
+      },
+      {
+        "text": "ok so can you keep me on traack while i do the midterm revew sheet",
+        "label": "focus",
+        "pred": "recall",
+        "conf": 0.502
+      },
+      {
+        "text": "How busy is my week",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.675
+      },
+      {
+        "text": "ok so turn these notes into flashacrds on how mortgages work",
+        "label": "general",
+        "pred": "settings_privacy",
+        "conf": 0.894
+      },
+      {
+        "text": "hey kelsie How busy is my week",
+        "label": "deadline_query",
+        "pred": "general",
+        "conf": 0.671
+      },
+      {
+        "text": "bookmark this in your memory!",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.584
+      },
+      {
+        "text": "See ya?",
+        "label": "smalltalk",
+        "pred": "recall",
+        "conf": 0.64
+      },
+      {
+        "text": "what's a good way to starrt a speech",
+        "label": "general",
+        "pred": "application",
+        "conf": 0.384
+      },
+      {
+        "text": "hey kelsie i want to come back to tihs ltaer please",
+        "label": "remember",
+        "pred": "focus",
+        "conf": 0.496
+      },
+      {
+        "text": "how bsuy is my week",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.453
+      },
+      {
+        "text": "Help me repy to this email",
+        "label": "general",
+        "pred": "application",
+        "conf": 0.899
+      },
+      {
+        "text": "where am i wiht applications",
+        "label": "application",
+        "pred": "deadline_query",
+        "conf": 0.87
+      },
+      {
+        "text": "what's a good way to stat a speceh",
+        "label": "general",
+        "pred": "focus",
+        "conf": 0.706
+      },
+      {
+        "text": "BOOKMARK THIS IN YOUR MEMORY",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.584
+      },
+      {
+        "text": "LATER KELSIE",
+        "label": "smalltalk",
+        "pred": "remember",
+        "conf": 0.314
+      },
+      {
+        "text": "CLEAR MY MEMORIES",
+        "label": "settings_privacy",
+        "pred": "recall",
+        "conf": 0.376
+      },
+      {
+        "text": "bookmarrk this in your memory",
+        "label": "remember",
+        "pred": "settings_privacy",
+        "conf": 0.584
+      }
+    ]
+  },
+  "handwritten": {
+    "n": 72,
+    "accuracy": 0.9166666666666666,
+    "macro_f1": 0.9173747276688453,
+    "per_intent": {
+      "remember": {
+        "precision": 0.8888888888888888,
+        "recall": 1.0,
+        "f1-score": 0.9411764705882353,
+        "support": 8.0
+      },
+      "recall": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 8.0
+      },
+      "deadline_add": {
+        "precision": 0.875,
+        "recall": 0.875,
+        "f1-score": 0.875,
+        "support": 8.0
+      },
+      "deadline_query": {
+        "precision": 1.0,
+        "recall": 0.875,
+        "f1-score": 0.9333333333333333,
+        "support": 8.0
+      },
+      "focus": {
+        "precision": 0.7777777777777778,
+        "recall": 0.875,
+        "f1-score": 0.8235294117647058,
+        "support": 8.0
+      },
+      "application": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 8.0
+      },
+      "settings_privacy": {
+        "precision": 1.0,
+        "recall": 0.875,
+        "f1-score": 0.9333333333333333,
+        "support": 8.0
+      },
+      "smalltalk": {
+        "precision": 0.875,
+        "recall": 0.875,
+        "f1-score": 0.875,
+        "support": 8.0
+      },
+      "general": {
+        "precision": 0.875,
+        "recall": 0.875,
+        "f1-score": 0.875,
+        "support": 8.0
+      },
+      "accuracy": 0.9166666666666666,
+      "macro avg": {
+        "precision": 0.9212962962962963,
+        "recall": 0.9166666666666666,
+        "f1-score": 0.9173747276688453,
+        "support": 72.0
+      },
+      "weighted avg": {
+        "precision": 0.9212962962962963,
+        "recall": 0.9166666666666666,
+        "f1-score": 0.9173747276688453,
+        "support": 72.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        7
+      ]
+    ],
+    "routing": {
+      "coverage": 0.9027777777777778,
+      "accuracy_when_kept": 0.9538461538461539,
+      "fell_back_share": 0.09722222222222222,
+      "wrong_action_rate": 0.041666666666666664,
+      "end_to_end_ok": 0.9583333333333334
+    },
+    "errors": [
+      {
+        "text": "ugh calc homework due tmrw at 9",
+        "label": "deadline_add",
+        "pred": "focus",
+        "conf": 0.414
+      },
+      {
+        "text": "is the calc homework due friday or monday",
+        "label": "deadline_query",
+        "pred": "deadline_add",
+        "conf": 0.998
+      },
+      {
+        "text": "keep me locked in while i write this essay",
+        "label": "focus",
+        "pred": "general",
+        "conf": 0.618
+      },
+      {
+        "text": "pause saving stuff for today",
+        "label": "settings_privacy",
+        "pred": "focus",
+        "conf": 0.836
+      },
+      {
+        "text": "ur so real for that",
+        "label": "smalltalk",
+        "pred": "remember",
+        "conf": 0.743
+      },
+      {
+        "text": "is it 'affect' or 'effect' here",
+        "label": "general",
+        "pred": "smalltalk",
+        "conf": 0.529
+      }
+    ]
+  }
+}

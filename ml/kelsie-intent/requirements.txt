@@ -1,0 +1,7 @@
+# Tested with Python 3.13 on CPU
+torch==2.15.0
+onnx==1.23.2
+onnxruntime==1.29.0
+onnxscript
+scikit-learn==1.9.1
+numpy==2.5.3

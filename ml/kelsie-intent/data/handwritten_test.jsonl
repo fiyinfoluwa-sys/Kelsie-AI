@@ -1,0 +1,72 @@
+{"text": "yo can u hang onto this article for my essay", "label": "remember"}
+{"text": "kelsie this is the one, keep it", "label": "remember"}
+{"text": "need you to remember jordan's bday is the 9th", "label": "remember"}
+{"text": "stash this somewhere i can find it later", "label": "remember"}
+{"text": "remember for later: tutorial moved to room 204", "label": "remember"}
+{"text": "keep a note of these 3 stats for my presentation", "label": "remember"}
+{"text": "save the part about opportunity cost", "label": "remember"}
+{"text": "dont lose this link pls", "label": "remember"}
+{"text": "what was that stimulus thing i read like two days ago", "label": "recall"}
+{"text": "u saved a quote for me earlier, what was it", "label": "recall"}
+{"text": "whats the name of the podcast i was listening to", "label": "recall"}
+{"text": "remind me what the article said about interest rates", "label": "recall"}
+{"text": "i looked at an apartment on tuesday, which one was it", "label": "recall"}
+{"text": "bring up my notes from the psych reading", "label": "recall"}
+{"text": "what did i tell you about maya", "label": "recall"}
+{"text": "find that resume thread again", "label": "recall"}
+{"text": "psych paper due the 30th", "label": "deadline_add"}
+{"text": "just found out the lab is due wed morning", "label": "deadline_add"}
+{"text": "my prof moved the quiz to monday", "label": "deadline_add"}
+{"text": "ugh calc homework due tmrw at 9", "label": "deadline_add"}
+{"text": "add my cs project, due dec 5", "label": "deadline_add"}
+{"text": "the bio lab writeup has to be in by thursday noon", "label": "deadline_add"}
+{"text": "internship app closes sunday", "label": "deadline_add"}
+{"text": "presentation for marketing is next tuesday", "label": "deadline_add"}
+{"text": "whats on deck for me this week", "label": "deadline_query"}
+{"text": "anything due tmrw?", "label": "deadline_query"}
+{"text": "when's the cs project due again", "label": "deadline_query"}
+{"text": "what's left for this semester", "label": "deadline_query"}
+{"text": "do i have time to go out tonight or is stuff due", "label": "deadline_query"}
+{"text": "whats my next exam", "label": "deadline_query"}
+{"text": "which assignment should i start first", "label": "deadline_query"}
+{"text": "is the calc homework due friday or monday", "label": "deadline_query"}
+{"text": "ok time to grind, 1 hour", "label": "focus"}
+{"text": "stop me from opening tiktok for a bit", "label": "focus"}
+{"text": "start a 25 min pomodoro", "label": "focus"}
+{"text": "i cant focus at all today", "label": "focus"}
+{"text": "end the timer im done", "label": "focus"}
+{"text": "give me 10 more minutes on the session", "label": "focus"}
+{"text": "keep me locked in while i write this essay", "label": "focus"}
+{"text": "study session start", "label": "focus"}
+{"text": "can u write me a cover letter for this posting", "label": "application"}
+{"text": "i just applied to the rbc co-op", "label": "application"}
+{"text": "fill this form with my info", "label": "application"}
+{"text": "where am i at with my job apps", "label": "application"}
+{"text": "help me answer tell us about yourself", "label": "application"}
+{"text": "they rejected me from lumen, update it", "label": "application"}
+{"text": "help me prep for my interview thursday", "label": "application"}
+{"text": "make my resume fit this job", "label": "application"}
+{"text": "talk to me in hype mode", "label": "settings_privacy"}
+{"text": "dont run on my email", "label": "settings_privacy"}
+{"text": "wipe all my notes", "label": "settings_privacy"}
+{"text": "can i see everything you have on me", "label": "settings_privacy"}
+{"text": "turn yourself off on reddit", "label": "settings_privacy"}
+{"text": "i moved to vancouver, update my time zone", "label": "settings_privacy"}
+{"text": "pause saving stuff for today", "label": "settings_privacy"}
+{"text": "remove linkedin from your list", "label": "settings_privacy"}
+{"text": "heyy", "label": "smalltalk"}
+{"text": "ty kelsie", "label": "smalltalk"}
+{"text": "ur so real for that", "label": "smalltalk"}
+{"text": "how's your day going", "label": "smalltalk"}
+{"text": "nighty night kelsie", "label": "smalltalk"}
+{"text": "what are you exactly", "label": "smalltalk"}
+{"text": "lmaoo", "label": "smalltalk"}
+{"text": "morning!", "label": "smalltalk"}
+{"text": "what does opportunity cost mean", "label": "general"}
+{"text": "make this sound less awkward: i am writing to inquire", "label": "general"}
+{"text": "give me a study plan for chem", "label": "general"}
+{"text": "explain the difference between mitosis and meiosis", "label": "general"}
+{"text": "how do i email my prof for an extension", "label": "general"}
+{"text": "write a caption for my insta", "label": "general"}
+{"text": "is it 'affect' or 'effect' here", "label": "general"}
+{"text": "help me outline my history paper", "label": "general"}

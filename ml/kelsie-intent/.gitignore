@@ -1,0 +1,8 @@
+__pycache__/
+js/node_modules/
+artifacts/profiling/trace_*.json
+
+# Model weights: rebuilt by ./run_all.sh, so not committed. The model the
+# app ships is committed separately with the web app (web/intent-router/).
+artifacts/*.pt
+artifacts/*.onnx

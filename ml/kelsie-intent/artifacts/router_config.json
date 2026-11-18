@@ -1,0 +1,27 @@
+{
+  "labels": [
+    "remember",
+    "recall",
+    "deadline_add",
+    "deadline_query",
+    "focus",
+    "application",
+    "settings_privacy",
+    "smalltalk",
+    "general"
+  ],
+  "routes": {
+    "remember": "llm_small",
+    "recall": "llm",
+    "deadline_add": "llm_small",
+    "deadline_query": "local",
+    "focus": "local",
+    "application": "llm",
+    "settings_privacy": "local",
+    "smalltalk": "local",
+    "general": "llm"
+  },
+  "fallback": "general",
+  "temperature": 0.5948886275291443,
+  "threshold": 0.68
+}

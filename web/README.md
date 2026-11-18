@@ -93,7 +93,7 @@ Supabase's built-in email service is meant for testing: it sends very few emails
 
 `POST /api/kelsie/message` with `{ "text": "..." }` (signed-in session) returns `{ reply, handler, intent, confirm? }`.
 
-Before any AI call, the intent router in [`intent-router/`](intent-router) (copied from `../../kelsie-intent`; model loaded once per server instance, ~120 ms, then ~0.3 ms a message) decides where the message goes:
+Before any AI call, the intent router in [`intent-router/`](intent-router) (copied from [`../ml/kelsie-intent`](../ml/kelsie-intent); model loaded once per server instance, ~120 ms, then ~0.3 ms a message) decides where the message goes:
 
 | Intent | Handler | AI? |
 |---|---|---|
@@ -127,7 +127,7 @@ select case when fell_back then 'fallback → llm' else route end as path, count
 from router_events group by 1 order by 2 desc;
 ```
 
-To retrain: run `./run_all.sh` in `kelsie-intent`, copy `js/tokenizer.js`, `js/router.js`, `artifacts/intent_int8.onnx` and `artifacts/router_config.json` into `intent-router/`, then run `python tests/test_tokenizer_parity.py` there and `npm test` here. Relabel opted-in examples with:
+To retrain: run `./run_all.sh` in `ml/kelsie-intent`, copy `js/tokenizer.js`, `js/router.js`, `artifacts/intent_int8.onnx` and `artifacts/router_config.json` into `intent-router/`, then run `python tests/test_tokenizer_parity.py` there and `npm test` here. Relabel opted-in examples with:
 
 ```sql
 select id, text, predicted, confidence, fell_back from router_training_examples where correct_intent is null;

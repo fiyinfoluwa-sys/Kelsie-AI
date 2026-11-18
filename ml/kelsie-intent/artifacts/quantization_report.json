@@ -1,0 +1,97 @@
+{
+  "tokenizer_mean_us": 36.4,
+  "threads": 1,
+  "max_len": 128,
+  "variants": {
+    "fp32": {
+      "size_kb": 12344.6,
+      "test_acc": 0.8045,
+      "handwritten_acc": 0.9167,
+      "agree_with_fp32_test": 1.0,
+      "agree_with_fp32_handwritten": 1.0,
+      "latency_model_only": {
+        "p50_us": 54.7,
+        "p95_us": 113.4,
+        "mean_us": 67.5
+      },
+      "latency_with_tokenizer": {
+        "p50_us": 110.8,
+        "p95_us": 175.5,
+        "mean_us": 117.3
+      },
+      "throughput_msgs_per_s_batch64": 108896
+    },
+    "int8_linear": {
+      "size_kb": 12306.6,
+      "test_acc": 0.8076,
+      "handwritten_acc": 0.9028,
+      "agree_with_fp32_test": 0.9848,
+      "agree_with_fp32_handwritten": 0.9861,
+      "latency_model_only": {
+        "p50_us": 89.4,
+        "p95_us": 152.6,
+        "mean_us": 99.9
+      },
+      "latency_with_tokenizer": {
+        "p50_us": 166.8,
+        "p95_us": 307.5,
+        "mean_us": 182.6
+      },
+      "throughput_msgs_per_s_batch64": 98264
+    },
+    "int8_full": {
+      "size_kb": 3347.1,
+      "test_acc": 0.8121,
+      "handwritten_acc": 0.9167,
+      "agree_with_fp32_test": 0.9909,
+      "agree_with_fp32_handwritten": 1.0,
+      "latency_model_only": {
+        "p50_us": 108.2,
+        "p95_us": 177.9,
+        "mean_us": 120.2
+      },
+      "latency_with_tokenizer": {
+        "p50_us": 210.4,
+        "p95_us": 467.6,
+        "mean_us": 254.2
+      },
+      "throughput_msgs_per_s_batch64": 86195
+    },
+    "onnx_fp32": {
+      "size_kb": 12343.4,
+      "test_acc": 0.8045,
+      "handwritten_acc": 0.9167,
+      "agree_with_fp32_test": 1.0,
+      "agree_with_fp32_handwritten": 1.0,
+      "latency_model_only": {
+        "p50_us": 18.6,
+        "p95_us": 28.7,
+        "mean_us": 20.7
+      },
+      "latency_with_tokenizer": {
+        "p50_us": 66.5,
+        "p95_us": 108.3,
+        "mean_us": 71.2
+      },
+      "throughput_msgs_per_s_batch64": 122175
+    },
+    "onnx_int8": {
+      "size_kb": 3090.6,
+      "test_acc": 0.803,
+      "handwritten_acc": 0.9028,
+      "agree_with_fp32_test": 0.9985,
+      "agree_with_fp32_handwritten": 0.9861,
+      "latency_model_only": {
+        "p50_us": 23.2,
+        "p95_us": 45.4,
+        "mean_us": 27.3
+      },
+      "latency_with_tokenizer": {
+        "p50_us": 70.0,
+        "p95_us": 143.6,
+        "mean_us": 78.2
+      },
+      "throughput_msgs_per_s_batch64": 117511
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "runs": [
+    {
+      "seed": 1,
+      "threshold": 0.8,
+      "test (held-out templates)/accuracy": 0.7223065250379362,
+      "test (held-out templates)/macro_f1": 0.7271301567437792,
+      "handwritten/accuracy": 0.875,
+      "handwritten/macro_f1": 0.8776688453159041,
+      "test (held-out templates)/routing/coverage": 0.6570561456752656,
+      "test (held-out templates)/routing/accuracy_when_kept": 0.8383371824480369,
+      "test (held-out templates)/routing/wrong_action_rate": 0.0819423368740516,
+      "handwritten/routing/coverage": 0.75,
+      "handwritten/routing/accuracy_when_kept": 0.9629629629629629,
+      "handwritten/routing/wrong_action_rate": 0.013888888888888888
+    },
+    {
+      "seed": 2,
+      "threshold": 0.83,
+      "test (held-out templates)/accuracy": 0.7862595419847328,
+      "test (held-out templates)/macro_f1": 0.7871961230977127,
+      "handwritten/accuracy": 0.9027777777777778,
+      "handwritten/macro_f1": 0.8985004828142085,
+      "test (held-out templates)/routing/coverage": 0.6198473282442748,
+      "test (held-out templates)/routing/accuracy_when_kept": 0.8916256157635468,
+      "test (held-out templates)/routing/wrong_action_rate": 0.06412213740458016,
+      "handwritten/routing/coverage": 0.6805555555555556,
+      "handwritten/routing/accuracy_when_kept": 0.9795918367346939,
+      "handwritten/routing/wrong_action_rate": 0.013888888888888888
+    },
+    {
+      "seed": 3,
+      "threshold": 0.87,
+      "test (held-out templates)/accuracy": 0.7526555386949925,
+      "test (held-out templates)/macro_f1": 0.7543486155930696,
+      "handwritten/accuracy": 0.8472222222222222,
+      "handwritten/macro_f1": 0.8495175848117024,
+      "test (held-out templates)/routing/coverage": 0.4628224582701062,
+      "test (held-out templates)/routing/accuracy_when_kept": 0.9081967213114754,
+      "test (held-out templates)/routing/wrong_action_rate": 0.0409711684370258,
+      "handwritten/routing/coverage": 0.5555555555555556,
+      "handwritten/routing/accuracy_when_kept": 0.975,
+      "handwritten/routing/wrong_action_rate": 0.013888888888888888
+    },
+    {
+      "seed": 4,
+      "threshold": 0.89,
+      "test (held-out templates)/accuracy": 0.749618320610687,
+      "test (held-out templates)/macro_f1": 0.7451972792890413,
+      "handwritten/accuracy": 0.7777777777777778,
+      "handwritten/macro_f1": 0.7815333645829001,
+      "test (held-out templates)/routing/coverage": 0.4213740458015267,
+      "test (held-out templates)/routing/accuracy_when_kept": 0.9565217391304348,
+      "test (held-out templates)/routing/wrong_action_rate": 0.0183206106870229,
+      "handwritten/routing/coverage": 0.3472222222222222,
+      "handwritten/routing/accuracy_when_kept": 1.0,
+      "handwritten/routing/wrong_action_rate": 0.0
+    },
+    {
+      "seed": 5,
+      "threshold": 0.92,
+      "test (held-out templates)/accuracy": 0.8,
+      "test (held-out templates)/macro_f1": 0.7952549673338641,
+      "handwritten/accuracy": 0.8472222222222222,
+      "handwritten/macro_f1": 0.8433006535947712,
+      "test (held-out templates)/routing/coverage": 0.41818181818181815,
+      "test (held-out templates)/routing/accuracy_when_kept": 0.9963768115942029,
+      "test (held-out templates)/routing/wrong_action_rate": 0.0015151515151515152,
+      "handwritten/routing/coverage": 0.5416666666666666,
+      "handwritten/routing/accuracy_when_kept": 0.9743589743589743,
+      "handwritten/routing/wrong_action_rate": 0.013888888888888888
+    }
+  ],
+  "summary": {
+    "threshold": {
+      "mean": 0.8620000000000001,
+      "std": 0.04764451699828639
+    },
+    "test (held-out templates)/accuracy": {
+      "mean": 0.7621679852656698,
+      "std": 0.031018466992285863
+    },
+    "test (held-out templates)/macro_f1": {
+      "mean": 0.7618254284114935,
+      "std": 0.028711348673827543
+    },
+    "handwritten/accuracy": {
+      "mean": 0.85,
+      "std": 0.04648111258522642
+    },
+    "handwritten/macro_f1": {
+      "mean": 0.8501041862238973,
+      "std": 0.04430181060772159
+    },
+    "test (held-out templates)/routing/coverage": {
+      "mean": 0.5158563592345983,
+      "std": 0.11405187361405941
+    },
+    "test (held-out templates)/routing/accuracy_when_kept": {
+      "mean": 0.9182116140495393,
+      "std": 0.06075463355990007
+    },
+    "test (held-out templates)/routing/wrong_action_rate": {
+      "mean": 0.041374280983566394,
+      "std": 0.032724671680290994
+    },
+    "handwritten/routing/coverage": {
+      "mean": 0.575,
+      "std": 0.1542229626943479
+    },
+    "handwritten/routing/accuracy_when_kept": {
+      "mean": 0.9783827548113262,
+      "std": 0.013547794917751243
+    },
+    "handwritten/routing/wrong_action_rate": {
+      "mean": 0.01111111111111111,
+      "std": 0.006211299937499416
+    }
+  }
+}

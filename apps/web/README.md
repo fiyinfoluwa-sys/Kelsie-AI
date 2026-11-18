@@ -15,11 +15,12 @@ The Kelsie profile site, built with Next.js (App Router) and Supabase Auth.
 
 Requires Node.js 20.9 or newer and the Supabase setup below.
 
+This app is `apps/web` in an npm-workspaces monorepo: install once from the repo root.
+
 ```bash
-cd web
-cp .env.example .env.local   # then fill in the two values
-npm install
-npm run dev
+npm install                                        # from the repo root
+cp apps/web/.env.example apps/web/.env.local       # then fill in the values
+npm run dev                                        # runs apps/web
 ```
 
 Open <http://localhost:3000>.
@@ -62,7 +63,7 @@ Open <http://localhost:3000>.
      <p><a href="{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=recovery">Reset my password</a></p>
      <p>If you didn't ask for this, you can ignore this email. Your password won't change.</p>
      ```
-6. **Project Settings → API Keys**: copy the **Project URL** and the **publishable** key (`sb_publishable_…`; on older projects, the `anon` key) into `web/.env.local`. Don't copy the secret / `service_role` key anywhere: the app doesn't use it.
+6. **Project Settings → API Keys**: copy the **Project URL** and the **publishable** key (`sb_publishable_…`; on older projects, the `anon` key) into `apps/web/.env.local`. Don't copy the secret / `service_role` key anywhere: the app doesn't use it.
 
 ### 2. Google sign-in
 
@@ -72,14 +73,14 @@ Open <http://localhost:3000>.
    - Authorized JavaScript origins: `http://localhost:3000`, `https://kelsie-ai-beta.vercel.app`
    - Authorized redirect URI: `https://<your-project-ref>.supabase.co/auth/v1/callback`. Supabase shows the exact URL under **Authentication → Sign In / Providers → Google**.
 4. Paste the client ID and secret into **Supabase → Authentication → Sign In / Providers → Google**, and enable it. The Google secret stays in Supabase; the app never sees it.
-5. Set `GOOGLE_SIGN_IN=on` in `web/.env.local` and in Vercel to show the "Continue with Google" button. While it's off, the button is hidden and the server refuses Google sign-in.
+5. Set `GOOGLE_SIGN_IN=on` in `apps/web/.env.local` and in Vercel to show the "Continue with Google" button. While it's off, the button is hidden and the server refuses Google sign-in.
 
 ### 3. Groq (AI notes)
 
 1. Sign up at <https://console.groq.com> (free tier).
 2. **Settings → Data Controls**: turn on **Zero Data Retention**.
 3. **API Keys → Create API Key**, name it `kelsie-web`, copy it once.
-4. Add it as `GROQ_API_KEY` in `web/.env.local` and in Vercel. Never in the extension or the repo.
+4. Add it as `GROQ_API_KEY` in `apps/web/.env.local` and in Vercel. Never in the extension or the repo.
 
 ### 4. Vercel
 
@@ -93,7 +94,7 @@ Supabase's built-in email service is meant for testing: it sends very few emails
 
 `POST /api/kelsie/message` with `{ "text": "..." }` (signed-in session) returns `{ reply, handler, intent, confirm? }`.
 
-Before any AI call, the intent router in [`intent-router/`](intent-router) (copied from [`../ml/kelsie-intent`](../ml/kelsie-intent); model loaded once per server instance, ~120 ms, then ~0.3 ms a message) decides where the message goes:
+Before any AI call, the intent router in [`intent-router/`](intent-router) (copied from [`ml/kelsie-intent`](../../ml/kelsie-intent); model loaded once per server instance, ~120 ms, then ~0.3 ms a message) decides where the message goes:
 
 | Intent | Handler | AI? |
 |---|---|---|
@@ -140,8 +141,8 @@ select id, text, predicted, confidence, fell_back from router_training_examples 
 
 ## Chrome extension
 
-The extension lives in [`../chrome-extension`](../chrome-extension). It connects through `/connect-extension` and calls `/api/extension/*`; see its README.
+The extension lives in [`chrome-extension`](../../chrome-extension). It connects through `/connect-extension` and calls `/api/extension/*`; see its README.
 
 ## Deploy
 
-Push to `main`; Vercel builds from the `web` folder.
+Push to `main`; Vercel builds from the `web` folder (v1 project). The v2 branch builds from `apps/web` in its own Vercel project.

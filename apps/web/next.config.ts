@@ -1,4 +1,9 @@
+import path from "node:path";
 import type { NextConfig } from "next";
+
+// The monorepo root (apps/web is two levels down). Dependencies are installed
+// there, so Next.js needs it to trace and bundle files outside apps/web.
+const REPO_ROOT = path.join(__dirname, "../..");
 
 const securityHeaders = [
   // No other site may put Kelsie's pages in a frame (stops clickjacking on
@@ -16,17 +21,20 @@ const securityHeaders = [
 ];
 
 // Files the intent router reads at runtime, which Vercel must ship with the
-// functions that use it (they're loaded from disk, not imported).
+// functions that use it (they're loaded from disk, not imported). Paths are
+// relative to apps/web; ONNX Runtime lives in the repo-root node_modules.
 const ROUTER_FILES = [
   "./intent-router/intent_int8.onnx",
   "./intent-router/router_config.json",
-  "./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm",
-  "./node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs",
+  "../../node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm",
+  "../../node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs",
 ];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  outputFileTracingRoot: REPO_ROOT,
+  turbopack: { root: REPO_ROOT },
   // ONNX Runtime loads its WebAssembly from node_modules; don't bundle it.
   serverExternalPackages: ["onnxruntime-web"],
   outputFileTracingIncludes: {
